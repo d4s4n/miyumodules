@@ -24,6 +24,8 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
+__version__ = (1, 0, 1)
+
 import psutil
 import platform
 import time
@@ -37,13 +39,23 @@ class ServerInfoMod(loader.Module):
         "name": "ServerInfo"
     }
 
+    version = "v{}.{}.{}".format(*__version__)
+
     def __init__(self):
         self.name = self.strings["name"]
+
+    async def client_ready(self, client, db):
+        await self.inline.bot.send_message(
+            "@HikkaUserbot",
+            "<emoji document_id=6321456789012345678>🌙</emoji> <b>Модуль ServerInfo ({}) загружен <emoji document_id=7123456789012345678>( ^_^)ﾉ</emoji></b>\n".format(self.version) +
+            "ℹ️ Получение информации о сервере\n\n"
+            "<emoji document_id=8321456789012345678>▫️</emoji> <code>.serverinfo</code> - Показать информацию о сервере\n\n"
+            "<emoji document_id=9521456789012345678>🤲</emoji> Разработчик: @miyumodules"
+        )
 
     async def serverinfocmd(self, message):
         cpu_load = psutil.cpu_percent(interval=1)
         cpu_cores = psutil.cpu_count(logical=False)
-        cpu_threads = psutil.cpu_count(logical=True)
 
         cpu_name = "Неизвестно"
         try:
@@ -97,10 +109,10 @@ class ServerInfoMod(loader.Module):
         ram_bar = bar(used_ram / total_ram * 100)
         disk_bar = bar(used_disk / total_disk * 100)
 
-        reply = "🖥️ <b>Информация о сервере</b>\n\n"
+        reply = "<emoji document_id=6321456789012345678>🌙</emoji> <b>Информация о сервере</b>\n\n"
         reply += "┎ <b>⚙️ Процессор</b>\n"
         reply += f"┣ <b>Модель:</b> <code>{cpu_name}</code>\n"
-        reply += f"┣ <b>Ядра / Потоки:</b> <code>{cpu_cores} / {cpu_threads}</code>\n"
+        reply += f"┣ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
         reply += f"┗ <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
         reply += "┎ <b>📈 Память</b>\n"
         reply += f"┣ <b>ОЗУ:</b> <code>{ram_bar} {used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
@@ -110,6 +122,7 @@ class ServerInfoMod(loader.Module):
         reply += "┎ <b>🛠️ Система</b>\n"
         reply += f"┣ <b>ОС:</b> <code>{os_info}</code>\n"
         reply += f"┣ <b>Python:</b> <code>{python_ver}</code>\n"
-        reply += f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>"
+        reply += f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>\n\n"
+        reply += "<emoji document_id=9521456789012345678>🤲</emoji> <i>by @miyumodules</i>"
 
         await utils.answer(message, reply)
