@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 1)
+__version__ = (1, 0, 2)
 
 import psutil
 import platform
@@ -47,11 +47,14 @@ class ServerInfoMod(loader.Module):
     async def client_ready(self, client, db):
         await self.inline.bot.send_message(
             "@HikkaUserbot",
-            "<emoji document_id=5823396554345549784>🌘</emoji> <b>Модуль ServerInfo ({}) загружен <emoji document_id=5418391207386949986>( ･ω･)ﾉ</emoji></b>\n".format(self.version) +
-            "ℹ️ Получение информации о сервере\n\n"
-            "<emoji document_id=5454212341982642271>▫️</emoji> <code>.serverinfo</code> - Показать информацию о сервере\n\n"
-            "<emoji document_id=5312152945491190875>🫶</emoji> Разработчик: @miyumodules",
-            parse_mode="HTML"
+            (
+                f"<emoji document_id=5204045566623752538>🖥️</emoji> <b>Модуль ServerInfo ({self.version}) загружен ( ･ω･)ﾉ</b>\n"
+                "ℹ️ Получение информации о сервере\n\n"
+                "▫️ <code>.serverinfo</code> - Показать информацию о сервере\n\n"
+                "<emoji document_id=5447118793759322964>🫶</emoji> Разработчик: @miyumodules"
+            ),
+            parse_mode="HTML",
+            disable_web_page_preview=True
         )
 
     async def serverinfocmd(self, message):
@@ -110,20 +113,20 @@ class ServerInfoMod(loader.Module):
         ram_bar = bar(used_ram / total_ram * 100)
         disk_bar = bar(used_disk / total_disk * 100)
 
-        reply = "<emoji document_id=5823396554345549784>🌘</emoji> <b>Информация о сервере</b>\n\n"
-        reply += "┎ <b>⚙️ Процессор</b>\n"
+        reply = "<emoji document_id=5204045566623752538>🖥️</emoji> <b>Информация о сервере</b>\n\n"
+        reply += "┎ <b><emoji document_id=5407025283450275907>⚙️</emoji> Процессор</b>\n"
         reply += f"┣ <b>Модель:</b> <code>{cpu_name}</code>\n"
         reply += f"┣ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
         reply += f"┗ <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
-        reply += "┎ <b>📈 Память</b>\n"
+        reply += "┎ <b><emoji document_id=5451732532400374899>📊</emoji> Память</b>\n"
         reply += f"┣ <b>ОЗУ:</b> <code>{ram_bar} {used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
         reply += f"┗ <b>Диск:</b> <code>{disk_bar} {used_disk:.2f}/{total_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
-        reply += "┎ <b>🌐 Сеть</b>\n"
+        reply += "┎ <b><emoji document_id=5435040817994456362>🌐</emoji> Сеть</b>\n"
         reply += f"┗ <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>\n\n"
-        reply += "┎ <b>🛠️ Система</b>\n"
+        reply += "┎ <b><emoji document_id=5407025283450275907>🛠️</emoji> Система</b>\n"
         reply += f"┣ <b>ОС:</b> <code>{os_info}</code>\n"
         reply += f"┣ <b>Python:</b> <code>{python_ver}</code>\n"
         reply += f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>\n\n"
-        reply += "<emoji document_id=5312152945491190875>🫶</emoji> <i>by @miyumodules</i>"
+        reply += "<emoji document_id=5447118793759322964>🫶</emoji> <i>by @miyumodules</i>"
 
-        await utils.answer(message, reply, parse_mode="HTML")
+        await utils.answer(message, reply)
