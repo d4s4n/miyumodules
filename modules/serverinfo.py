@@ -47,10 +47,10 @@ class ServerInfoMod(loader.Module):
     async def client_ready(self, client, db):
         await self.inline.bot.send_message(
             "@HikkaUserbot",
-            "<emoji document_id=6321456789012345678>🌙</emoji> <b>Модуль ServerInfo ({}) загружен <emoji document_id=7123456789012345678>( ^_^)ﾉ</emoji></b>\n".format(self.version) +
+            "<emoji document_id=5823396554345549784>🌘</emoji> <b>Модуль ServerInfo ({}) загружен <emoji document_id=5418391207386949986>( ･ω･)ﾉ</emoji></b>\n".format(self.version) +
             "ℹ️ Получение информации о сервере\n\n"
-            "<emoji document_id=8321456789012345678>▫️</emoji> <code>.serverinfo</code> - Показать информацию о сервере\n\n"
-            "<emoji document_id=9521456789012345678>🤲</emoji> Разработчик: @miyumodules"
+            "<emoji document_id=5454212341982642271>▫️</emoji> <code>.serverinfo</code> - Показать информацию о сервере\n\n"
+            "<emoji document_id=5312152945491190875>🫶</emoji> Разработчик: @miyumodules"
         )
 
     async def serverinfocmd(self, message):
@@ -109,7 +109,7 @@ class ServerInfoMod(loader.Module):
         ram_bar = bar(used_ram / total_ram * 100)
         disk_bar = bar(used_disk / total_disk * 100)
 
-        reply = "<emoji document_id=6321456789012345678>🌙</emoji> <b>Информация о сервере</b>\n\n"
+        reply = "<emoji document_id=5823396554345549784>🌘</emoji> <b>Информация о сервере</b>\n\n"
         reply += "┎ <b>⚙️ Процессор</b>\n"
         reply += f"┣ <b>Модель:</b> <code>{cpu_name}</code>\n"
         reply += f"┣ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
@@ -123,6 +123,6 @@ class ServerInfoMod(loader.Module):
         reply += f"┣ <b>ОС:</b> <code>{os_info}</code>\n"
         reply += f"┣ <b>Python:</b> <code>{python_ver}</code>\n"
         reply += f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>\n\n"
-        reply += "<emoji document_id=9521456789012345678>🤲</emoji> <i>by @miyumodules</i>"
+        reply += "<emoji document_id=5312152945491190875>🫶</emoji> <i>by @miyumodules</i>"
 
         await utils.answer(message, reply)
