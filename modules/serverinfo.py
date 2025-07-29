@@ -21,6 +21,9 @@
 # scope: hikka_only
 # meta developer: @miyumodules
 
+# meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
+# meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
+
 import psutil
 import platform
 import time
