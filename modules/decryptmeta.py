@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 5)
+__version__ = (1, 0, 6)
 
 import os
 import struct
@@ -119,15 +119,12 @@ class Standoff2DecryptorMod(loader.Module):
 
         tmp_dir = None
         self.is_busy = True
+        msg = await utils.answer(
+            message,
+            self.strings("downloading_premium" if use_prem else "downloading_standard"),
+        )
 
         try:
-            msg = await utils.answer(
-                message,
-                self.strings(
-                    "downloading_premium" if use_prem else "downloading_standard"
-                ),
-            )
-
             tmp_dir = f"tmp_decrypt_{uuid.uuid4()}"
             os.makedirs(tmp_dir, exist_ok=True)
             lib_path = os.path.join(tmp_dir, "libunity.so")
@@ -144,11 +141,10 @@ class Standoff2DecryptorMod(loader.Module):
                     )
                     return
 
-            await utils.answer(
-                msg,
+            await msg.edit(
                 self.strings(
                     "decrypting_premium" if use_prem else "decrypting_standard"
-                ),
+                )
             )
 
             loop = asyncio.get_running_loop()
@@ -172,23 +168,21 @@ class Standoff2DecryptorMod(loader.Module):
                     await msg.delete()
 
             else:
-                await utils.answer(
-                    msg,
+                await msg.edit(
                     self.strings(
                         "no_candidates_premium"
                         if use_prem
                         else "no_candidates_standard"
-                    ),
+                    )
                 )
 
         except Exception as e:
             logger.exception("Decryption failed")
             if "msg" in locals():
-                await utils.answer(
-                    msg,
+                await msg.edit(
                     self.strings(
                         "fail_premium" if use_prem else "fail_standard"
-                    ).format(e=e),
+                    ).format(e=e)
                 )
         finally:
             self.is_busy = False
