@@ -24,22 +24,13 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 8)
+__version__ = (1, 0, 9)
 
 import psutil
 import platform
 import time
-import io
-import logging
 from datetime import timedelta
 from .. import loader, utils
-
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    plt = None
-
-logger = logging.getLogger(__name__)
 
 @loader.tds
 class ServerInfoMod(loader.Module):
@@ -47,7 +38,6 @@ class ServerInfoMod(loader.Module):
 
     strings = {
         "name": "ServerInfo",
-        "caption": "<b>Uptime:</b> <code>{uptime_str}</code>",
         "cpu_title": "┎ <b>CPU</b>",
         "cpu_model": "┣ <b>Model:</b> <code>{cpu_name}</code>",
         "cpu_cores": "┣ <b>Cores:</b> <code>{cpu_cores}</code>",
@@ -61,17 +51,13 @@ class ServerInfoMod(loader.Module):
         "sys_os": "┣ <b>OS:</b> <code>{os_info}</code>",
         "sys_python": "┣ <b>Python:</b> <code>{python_ver}</code>",
         "sys_uptime": "┗ <b>Uptime:</b> <code>{uptime_str}</code>",
-        "btn_graph": "📊 График",
-        "btn_text": "📝 Текст",
-        "graph_title": "Server Load",
-        "graph_y_label": "Usage (%)",
-        "matplotlib_missing": "<emoji document_id=5312526098750252863>🚫</emoji> <b>Необходима библиотека <code>matplotlib</code>.</b>\nУстановите ее командой <code>.terminal pip install matplotlib</code>",
+        "btn_refresh": "🔄 Refresh",
+        "refreshed": "Refreshed",
     }
     
     strings_ru = {
         "_cls_doc": "Показывает информацию о сервере, на котором запущен юзербот",
         "_cmd_doc_serverinfo": "Показать информацию о сервере",
-        "caption": "<b>Аптайм:</b> <code>{uptime_str}</code>",
         "cpu_title": "┎ <b>Процессор</b>",
         "cpu_model": "┣ <b>Модель:</b> <code>{cpu_name}</code>",
         "cpu_cores": "┣ <b>Ядра:</b> <code>{cpu_cores}</code>",
@@ -85,11 +71,8 @@ class ServerInfoMod(loader.Module):
         "sys_os": "┣ <b>ОС:</b> <code>{os_info}</code>",
         "sys_python": "┣ <b>Python:</b> <code>{python_ver}</code>",
         "sys_uptime": "┗ <b>Аптайм:</b> <code>{uptime_str}</code>",
-        "btn_graph": "📊 График",
-        "btn_text": "📝 Текст",
-        "graph_title": "Нагрузка на сервер",
-        "graph_y_label": "Использование (%)",
-        "matplotlib_missing": "<emoji document_id=5312526098750252863>🚫</emoji> <b>Необходима библиотека <code>matplotlib</code>.</b>\nУстановите ее командой <code>.terminal pip install matplotlib</code>",
+        "btn_refresh": "🔄 Обновить",
+        "refreshed": "Обновлено",
     }
 
     async def get_stats(self):
@@ -106,12 +89,10 @@ class ServerInfoMod(loader.Module):
             s["cpu_name"] = platform.processor() or "Unknown"
 
         ram = psutil.virtual_memory()
-        s["ram_percent"] = ram.percent
         s["total_ram"] = ram.total / 1024 ** 3
         s["used_ram"] = ram.used / 1024 ** 3
 
         disk = psutil.disk_usage('/')
-        s["disk_percent"] = disk.percent
         s["total_disk"] = disk.total / 1024 ** 3
         s["used_disk"] = disk.used / 1024 ** 3
         s["free_disk"] = disk.free / 1024 ** 3
@@ -141,7 +122,7 @@ class ServerInfoMod(loader.Module):
         s["cpu_bar"] = bar(s["cpu_load"])
         return s
 
-    async def get_text_view(self, stats):
+    async def get_text(self, stats):
         return (
             f'{self.strings("cpu_title")}\n'
             f'{self.strings("cpu_model").format(**stats)}\n'
@@ -158,83 +139,22 @@ class ServerInfoMod(loader.Module):
             f'{self.strings("sys_uptime").format(**stats)}'
         )
 
-    async def create_graph(self, stats):
-        if not plt: return None
-        
-        try:
-            plt.style.use("dark_background")
-            fig, ax = plt.subplots(figsize=(6, 4))
-            
-            labels = ["CPU", "RAM", "Disk"]
-            values = [stats["cpu_load"], stats["ram_percent"], stats["disk_percent"]]
-            
-            bars = ax.bar(labels, values, color=["#1f77b4", "#2ca02c", "#d62728"])
-            ax.set_ylim(0, 100)
-            ax.set_ylabel(self.strings("graph_y_label"))
-            ax.set_title(self.strings("graph_title"))
-            ax.grid(axis='y', linestyle='--', alpha=0.7)
-
-            for bar in bars:
-                yval = bar.get_height()
-                ax.text(bar.get_x() + bar.get_width()/2.0, yval + 2, f'{yval:.1f}%', ha='center', va='bottom')
-
-            buf = io.BytesIO()
-            plt.savefig(buf, format='PNG', bbox_inches='tight')
-            plt.close(fig)
-            buf.seek(0)
-            return buf
-        except Exception:
-            logger.exception("Graph creation failed!")
-            return None
-
     @loader.command(
         ru_doc="Показать информацию о сервере"
     )
     async def serverinfo(self, message):
         """Show server info"""
-        if not plt:
-            await utils.answer(message, self.strings("matplotlib_missing"))
-            return
-
         stats = await self.get_stats()
-        text = await self.get_text_view(stats)
+        text = await self.get_text(stats)
         
         await self.inline.form(
             message=message,
             text=text,
-            reply_markup=[[{"text": self.strings("btn_graph"), "callback": self.toggle_view, "data": "graph"}]],
+            reply_markup=[[{"text": self.strings("btn_refresh"), "callback": self.refresh}]],
         )
 
-    async def toggle_view(self, call):
-        if not plt:
-            await call.answer(self.strings("matplotlib_missing"))
-            return
-
-        view_type = call.data
+    async def refresh(self, call):
         stats = await self.get_stats()
-
-        if view_type == "graph":
-            graph_image = await self.create_graph(stats)
-            if not graph_image:
-                await call.answer("Failed to create graph, check logs", show_alert=True)
-                return
-
-            caption = self.strings("caption").format(**stats)
-            btn_data = "text"
-            btn_text = self.strings("btn_text")
-            
-            await call.edit(
-                text=caption, 
-                file=graph_image, 
-                reply_markup=[[{"text": btn_text, "callback": self.toggle_view, "data": btn_data}]]
-            )
-        else:
-            text = await self.get_text_view(stats)
-            btn_data = "graph"
-            btn_text = self.strings("btn_graph")
-            
-            await call.edit(
-                text=text,
-                file=None,
-                reply_markup=[[{"text": btn_text, "callback": self.toggle_view, "data": btn_data}]]
-            )
+        text = await self.get_text(stats)
+        await call.edit(text, reply_markup=call.message.reply_markup)
+        await call.answer(self.strings("refreshed"))
