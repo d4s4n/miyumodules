@@ -40,7 +40,7 @@ class ServerInfoMod(loader.Module):
         "name": "ServerInfo",
         "info_template": (
             "┎ <b>CPU</b>\n"
-            "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
+            "┣ <emoji document_id=5172869086727635492>🚵🏾‍♂️</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n"
             "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
             "┎ <b>Memory</b>\n"
