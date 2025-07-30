@@ -14,13 +14,14 @@
 
 ---
 
-### 📊 GitHub Stats
+### 📦 Repository Overview
 
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=d4s4n&show_icons=true&theme=github_dark&hide_border=true)
+![Repo Stats](https://github-readme-stats.vercel.app/api/pin/?username=d4s4n&repo=miyumodules&theme=github_dark&hide_border=true)
 
-### 🧠 Most Used Languages
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=d4s4n&layout=compact&theme=github_dark&hide_border=true)
+![Stars](https://img.shields.io/github/stars/d4s4n/miyumodules?style=flat&logo=github)
+![Forks](https://img.shields.io/github/forks/d4s4n/miyumodules?style=flat&logo=github)
+![Issues](https://img.shields.io/github/issues/d4s4n/miyumodules?style=flat)
+![Last Commit](https://img.shields.io/github/last-commit/d4s4n/miyumodules?style=flat)
 
 ---
 
