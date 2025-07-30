@@ -119,10 +119,12 @@ class Standoff2DecryptorMod(loader.Module):
 
         tmp_dir = None
         self.is_busy = True
-        msg = await utils.answer(
-            message,
-            self.strings("downloading_premium" if use_prem else "downloading_standard"),
+
+        msg = await message.respond(
+            self.strings("downloading_premium" if use_prem else "downloading_standard")
         )
+        if message.out:
+            await message.delete()
 
         try:
             tmp_dir = f"tmp_decrypt_{uuid.uuid4()}"
