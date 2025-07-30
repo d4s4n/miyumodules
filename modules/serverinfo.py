@@ -70,7 +70,7 @@ class ServerInfoMod(loader.Module):
         "sys_title": "┎ <b>Система</b>",
         "sys_os": "<emoji document_id=5275996452709998361>👩‍💻</emoji> <b>ОС:</b> <code>{os_info}</code>",
         "sys_python": "<emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>",
-        "sys_uptime": "<emoji document_id=5172533495162995360>💻</emoji> <b>Аптайм:</b> <code>{uptime_str}</code>",
+        "sys_uptime": "<emoji document_id=5228865182410762048>🌟</emoji> <b>Аптайм:</b> <code>{uptime_str}</code>",
         "btn_refresh": "🔄 Обновить",
         "refreshed": "Обновлено",
     }
