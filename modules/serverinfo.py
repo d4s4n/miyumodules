@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 2)
+__version__ = (1, 0, 3)
 
 import psutil, platform, time
 from datetime import timedelta
@@ -39,7 +39,12 @@ class ServerInfoMod(loader.Module):
         self.name = self.strings["name"]
 
     async def client_ready(self, client, db):
-        pass
+        await client.send_message(
+            "me",
+            "📦 <b>ServerInfo</b> <code>v{}</code> активирован!\n"
+            "🖥️ Используй <code>.serverinfo</code> для просмотра данных сервера\n"
+            "<emoji document_id=5228865182410762048>✨</emoji> Автор: <b>@miyumodules</b>".format(*__version__)
+        )
 
     async def serverinfocmd(self, message):
         cpu_load = psutil.cpu_percent(interval=1)
@@ -94,21 +99,20 @@ class ServerInfoMod(loader.Module):
         disk_bar = bar(used_disk / total_disk * 100)
 
         reply = (
-            "<emoji document_id=5204045566623752538>🖥️</emoji> <b>Информация о сервере</b>\n\n"
-            "┎ <b><emoji document_id=5407025283450275907>⚙️</emoji> Процессор</b>\n"
+            "<b>Информация о сервере</b>\n\n"
+            "┎ <b>Процессор</b>\n"
             f"┣ <b>Модель:</b> <code>{cpu_name}</code>\n"
             f"┣ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
             f"┗ <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
-            "┎ <b><emoji document_id=5451732532400374899>📊</emoji> Память</b>\n"
+            "┎ <b>Память</b>\n"
             f"┣ <b>ОЗУ:</b> <code>{ram_bar} {used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
             f"┗ <b>Диск:</b> <code>{disk_bar} {used_disk:.2f}/{total_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
-            "┎ <b><emoji document_id=5435040817994456362>🌐</emoji> Сеть</b>\n"
+            "┎ <b>Сеть</b>\n"
             f"┗ <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>\n\n"
-            "┎ <b><emoji document_id=5407025283450275907>🛠️</emoji> Система</b>\n"
+            "┎ <b>Система</b>\n"
             f"┣ <b>ОС:</b> <code>{os_info}</code>\n"
             f"┣ <b>Python:</b> <code>{python_ver}</code>\n"
-            f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>\n\n"
-            "<emoji document_id=5447118793759322964>🫶</emoji> <i>by @miyumodules</i>"
+            f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>"
         )
 
         await utils.answer(message, reply)
