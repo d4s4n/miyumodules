@@ -2,4 +2,4 @@
 
 ![Stat](https://github-readme-stats.vercel.app/api?username=d4s4n&show_icons=true&theme=github_dark)
 
-![Contributors](https://img.shields.io/github/contributors/d4s4n/miyumodules)
+![Contributors](https://contrib.rocks/image?repo=d4s4n/miyumodules)
