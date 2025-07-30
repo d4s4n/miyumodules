@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class Standoff2DecryptorMod(loader.Module):
-    """Standoff 2 metadata decryptor. Based on <a href="https://github.com/Michel-M-code/Metadata-Decryptor/">Michel-M-code</a>'s script."""
+    """Standoff 2 metadata decryptor. Based on https://github.com/Michel-M-code/Metadata-Decryptor/ script."""
 
     strings = {
         "name": "Standoff2Decryptor",
@@ -67,7 +67,7 @@ class Standoff2DecryptorMod(loader.Module):
     }
 
     strings_ru = {
-        "_cls_doc": "Дешифратор metadata для Standoff 2. На основе скрипта от <a href='https://github.com/Michel-M-code/Metadata-Decryptor/'>Michel-M-code</a>.",
+        "_cls_doc": "Дешифратор metadata для Standoff 2. На основе скрипта от https://github.com/Michel-M-code/Metadata-Decryptor/",
         "_cmd_doc_decmeta": "<ответом на файл / с файлом> - Расшифровать libunity.so",
         "no_lib": "<b>[SO2Decryptor]</b> Библиотека <code>pyelftools</code> не установлена.\nУстановите ее командой <code>.terminal pip install pyelftools</code>",
         "already_running": "<b>[SO2Decryptor]</b> Процесс дешифровки уже запущен. Пожалуйста, подождите.",
