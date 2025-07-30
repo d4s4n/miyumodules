@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 3)
+__version__ = (1, 1, 4)
 
 import psutil
 import platform
@@ -44,6 +44,7 @@ try:
 except ImportError:
     cpuinfo = None
 
+
 @loader.tds
 class ServerInfoMod(loader.Module):
     """Shows information about the server where the userbot is running"""
@@ -54,7 +55,8 @@ class ServerInfoMod(loader.Module):
         "info_template_premium": (
             "┎ <b>CPU</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
-            "┗ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n\n"
+            "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n"
+            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{ram_usage}</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{disk_usage}</code>\n\n"
@@ -68,7 +70,8 @@ class ServerInfoMod(loader.Module):
         "info_template_standard": (
             "┎ <b>CPU</b>\n"
             "┣ 💻 <b>Model:</b> <code>{cpu_name}</code>\n"
-            "┗ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n\n"
+            "┣ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n"
+            "┗ 📊 <b>Load:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ 💾 <b>RAM:</b> <code>{ram_usage}</code>\n"
             "┗ 💿 <b>Disk:</b> <code>{disk_usage}</code>\n\n"
@@ -80,7 +83,7 @@ class ServerInfoMod(loader.Module):
             "┗ ⏱ <b>Uptime:</b> <code>{uptime_str}</code>"
         ),
     }
-    
+
     strings_ru = {
         "_cls_doc": "Показывает информацию о сервере, на котором запущен юзербот",
         "_cmd_doc_serverinfo": "Показать информацию о сервере",
@@ -88,7 +91,8 @@ class ServerInfoMod(loader.Module):
         "info_template_premium": (
             "┎ <b>Процессор</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>\n"
-            "┗ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n\n"
+            "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n"
+            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{ram_usage}</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{disk_usage}</code>\n\n"
@@ -102,7 +106,8 @@ class ServerInfoMod(loader.Module):
         "info_template_standard": (
             "┎ <b>Процессор</b>\n"
             "┣ 💻 <b>Модель:</b> <code>{cpu_name}</code>\n"
-            "┗ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n\n"
+            "┣ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
+            "┗ 📊 <b>Нагрузка:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ 💾 <b>ОЗУ:</b> <code>{ram_usage}</code>\n"
             "┗ 💿 <b>Диск:</b> <code>{disk_usage}</code>\n\n"
@@ -120,8 +125,14 @@ class ServerInfoMod(loader.Module):
             os_info = distro.name(pretty=True)
         elif "com.termux" in os.environ.get("PREFIX", ""):
             try:
-                android_version = re.search(r"(\d+\.?\d*)", os.popen("getprop ro.build.version.release").read()).group(1)
-                os_info = f"Android {android_version}" if android_version else "Android (Termux)"
+                android_version = re.search(
+                    r"(\d+\.?\d*)", os.popen("getprop ro.build.version.release").read()
+                ).group(1)
+                os_info = (
+                    f"Android {android_version}"
+                    if android_version
+                    else "Android (Termux)"
+                )
             except Exception:
                 os_info = "Android (Termux)"
         else:
@@ -129,7 +140,7 @@ class ServerInfoMod(loader.Module):
                 os_info = f"{platform.system()} {platform.release()}"
             except Exception:
                 os_info = "N/A"
-        
+
         return os_info if os_info and os_info.strip() else "N/A"
 
     def get_cpu_info(self):
@@ -141,7 +152,7 @@ class ServerInfoMod(loader.Module):
                             return line.split(":", 1)[1].strip()
             except Exception:
                 pass
-        
+
         if cpuinfo:
             try:
                 info = cpuinfo.get_cpu_info()
@@ -157,41 +168,52 @@ class ServerInfoMod(loader.Module):
                 return name
         except Exception:
             pass
-        
+
         return "N/A"
 
     async def get_stats(self):
         s = {}
-        
+
         s["cpu_name"] = self.get_cpu_info()
         s["os_info"] = self.get_os_info()
         s["python_ver"] = platform.python_version()
 
         try:
-            s["cpu_cores"] = psutil.cpu_count(logical=False) or psutil.cpu_count(logical=True)
+            cpu_load_val = psutil.cpu_percent(interval=0.5)
+            bar = "█" * int(cpu_load_val / 10) + "▒" * (10 - int(cpu_load_val / 10))
+            s["cpu_load"] = f"{bar} {cpu_load_val:.1f}%"
+        except (PermissionError, Exception):
+            s["cpu_load"] = "N/A"
+
+        try:
+            s["cpu_cores"] = psutil.cpu_count(logical=False) or psutil.cpu_count(
+                logical=True
+            )
         except Exception:
             s["cpu_cores"] = "N/A"
 
         try:
             ram = psutil.virtual_memory()
-            total_ram = ram.total / 1024 ** 3
-            used_ram = ram.used / 1024 ** 3
+            total_ram = ram.total / 1024**3
+            used_ram = ram.used / 1024**3
             s["ram_usage"] = f"{used_ram:.2f}/{total_ram:.2f} GB"
         except Exception:
             s["ram_usage"] = "N/A"
-        
+
         try:
-            disk = psutil.disk_usage('/')
-            used_disk = disk.used / 1024 ** 3
-            free_disk = disk.free / 1024 ** 3
-            s["disk_usage"] = self.strings("disk_template").format(used_disk=used_disk, free_disk=free_disk)
+            disk = psutil.disk_usage("/")
+            used_disk = disk.used / 1024**3
+            free_disk = disk.free / 1024**3
+            s["disk_usage"] = self.strings("disk_template").format(
+                used_disk=used_disk, free_disk=free_disk
+            )
         except Exception:
             s["disk_usage"] = "N/A"
 
         try:
             net = psutil.net_io_counters()
-            down = net.bytes_recv / 1024 ** 3
-            up = net.bytes_sent / 1024 ** 3
+            down = net.bytes_recv / 1024**3
+            up = net.bytes_sent / 1024**3
             s["net_traffic"] = f"↓ {down:.2f} GB / ↑ {up:.2f} GB"
         except (PermissionError, Exception):
             s["net_traffic"] = "N/A"
@@ -203,25 +225,26 @@ class ServerInfoMod(loader.Module):
             time_part = timedelta(seconds=int(uptime % (24 * 3600)))
 
             if days:
-                day_word = "дней"
+                day_word = "days"
                 if self.strings._language == "ru":
+                    day_word = "дней"
                     if not (11 <= days % 100 <= 19):
-                        if days % 10 == 1: day_word = "день"
-                        elif 2 <= days % 10 <= 4: day_word = "дня"
-                elif days != 1:
-                    day_word = "days"
+                        if days % 10 == 1:
+                            day_word = "день"
+                        elif 2 <= days % 10 <= 4:
+                            day_word = "дня"
+                elif days == 1:
+                    day_word = "day"
 
                 s["uptime_str"] = f"{days} {day_word}, {time_part}"
             else:
                 s["uptime_str"] = str(time_part)
-        except Exception:
+        except (PermissionError, Exception):
             s["uptime_str"] = "N/A"
-        
+
         return s
 
-    @loader.command(
-        ru_doc="Показать информацию о сервере"
-    )
+    @loader.command(ru_doc="Показать информацию о сервере")
     async def serverinfo(self, message):
         """Show server info"""
         stats = await self.get_stats()
