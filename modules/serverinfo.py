@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 0)
+__version__ = (1, 1, 1)
 
 import psutil
 import platform
@@ -56,10 +56,10 @@ class ServerInfoMod(loader.Module):
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n"
             "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
-            "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>\n"
-            "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>\n\n"
+            "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{ram_usage}</code>\n"
+            "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{disk_usage}</code>\n\n"
             "┎ <b>Network</b>\n"
-            "┗ <emoji document_id=5175152196852908642>💻</emoji> <b>Traffic:</b> <code>↓ {net_down:.2f} GB / ↑ {net_up:.2f} GB</code>\n\n"
+            "┗ <emoji document_id=5175152196852908642>💻</emoji> <b>Traffic:</b> <code>{net_traffic}</code>\n\n"
             "┎ <b>System</b>\n"
             "┣ <emoji document_id=5275996452709998361>👩‍💻</emoji> <b>OS:</b> <code>{os_info}</code>\n"
             "┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>\n"
@@ -71,10 +71,10 @@ class ServerInfoMod(loader.Module):
             "┣ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n"
             "┗ 📊 <b>Load:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
-            "┣ 💾 <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>\n"
-            "┗ 💿 <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>\n\n"
+            "┣ 💾 <b>RAM:</b> <code>{ram_usage}</code>\n"
+            "┗ 💿 <b>Disk:</b> <code>{disk_usage}</code>\n\n"
             "┎ <b>Network</b>\n"
-            "┗ 📡 <b>Traffic:</b> <code>↓ {net_down:.2f} GB / ↑ {net_up:.2f} GB</code>\n\n"
+            "┗ 📡 <b>Traffic:</b> <code>{net_traffic}</code>\n\n"
             "┎ <b>System</b>\n"
             "┣ 🐧 <b>OS:</b> <code>{os_info}</code>\n"
             "┣ 🐍 <b>Python:</b> <code>{python_ver}</code>\n"
@@ -91,10 +91,10 @@ class ServerInfoMod(loader.Module):
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n"
             "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
-            "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
-            "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
+            "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{ram_usage}</code>\n"
+            "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{disk_usage}</code>\n\n"
             "┎ <b>Сеть</b>\n"
-            "┗ <emoji document_id=5175152196852908642>💻</emoji> <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>\n\n"
+            "┗ <emoji document_id=5175152196852908642>💻</emoji> <b>Трафик:</b> <code>{net_traffic}</code>\n\n"
             "┎ <b>Система</b>\n"
             "┣ <emoji document_id=5275996452709998361>👩‍💻</emoji> <b>ОС:</b> <code>{os_info}</code>\n"
             "┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>\n"
@@ -106,10 +106,10 @@ class ServerInfoMod(loader.Module):
             "┣ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
             "┗ 📊 <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
-            "┣ 💾 <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
-            "┗ 💿 <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
+            "┣ 💾 <b>ОЗУ:</b> <code>{ram_usage}</code>\n"
+            "┗ 💿 <b>Диск:</b> <code>{disk_usage}</code>\n\n"
             "┎ <b>Сеть</b>\n"
-            "┗ 📡 <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>\n\n"
+            "┗ 📡 <b>Трафик:</b> <code>{net_traffic}</code>\n\n"
             "┎ <b>Система</b>\n"
             "┣ 🐧 <b>ОС:</b> <code>{os_info}</code>\n"
             "┣ 🐍 <b>Python:</b> <code>{python_ver}</code>\n"
@@ -127,7 +127,10 @@ class ServerInfoMod(loader.Module):
             except Exception:
                 os_info = "Android (Termux)"
         else:
-            os_info = f"{platform.system()} {platform.release()}" or "Unknown OS"
+            try:
+                os_info = f"{platform.system()} {platform.release()}" or "N/A"
+            except Exception:
+                os_info = "N/A"
         
         return os_info
 
@@ -157,50 +160,69 @@ class ServerInfoMod(loader.Module):
         except Exception:
             pass
         
-        return "Unknown"
+        return "N/A"
 
     async def get_stats(self):
         s = {}
+        
+        s["cpu_name"] = self.get_cpu_info()
+        s["os_info"] = self.get_os_info()
+        s["python_ver"] = platform.python_version()
+
         try:
             cpu_load_val = psutil.cpu_percent(interval=0.5)
             s["cpu_bar"] = '█' * int(cpu_load_val / 10) + '▒' * (10 - int(cpu_load_val / 10))
             s["cpu_load"] = f"{cpu_load_val:.1f}%"
-        except PermissionError:
+        except (PermissionError, Exception):
             s["cpu_bar"] = "▒" * 10
             s["cpu_load"] = "N/A"
 
-        s["cpu_cores"] = psutil.cpu_count(logical=False) or psutil.cpu_count(logical=True)
-        s["cpu_name"] = self.get_cpu_info()
+        try:
+            s["cpu_cores"] = psutil.cpu_count(logical=False) or psutil.cpu_count(logical=True)
+        except Exception:
+            s["cpu_cores"] = "N/A"
 
-        ram = psutil.virtual_memory()
-        s["total_ram"] = ram.total / 1024 ** 3
-        s["used_ram"] = ram.used / 1024 ** 3
+        try:
+            ram = psutil.virtual_memory()
+            total_ram = ram.total / 1024 ** 3
+            used_ram = ram.used / 1024 ** 3
+            s["ram_usage"] = f"{used_ram:.2f}/{total_ram:.2f} GB"
+        except Exception:
+            s["ram_usage"] = "N/A"
+        
+        try:
+            disk = psutil.disk_usage('/')
+            total_disk = disk.total / 1024 ** 3
+            used_disk = disk.used / 1024 ** 3
+            free_disk = disk.free / 1024 ** 3
+            s["disk_usage"] = f"{used_disk:.2f} GB (Free: {free_disk:.2f} GB)"
+        except Exception:
+            s["disk_usage"] = "N/A"
 
-        disk = psutil.disk_usage('/')
-        s["total_disk"] = disk.total / 1024 ** 3
-        s["used_disk"] = disk.used / 1024 ** 3
-        s["free_disk"] = disk.free / 1024 ** 3
+        try:
+            net = psutil.net_io_counters()
+            down = net.bytes_recv / 1024 ** 3
+            up = net.bytes_sent / 1024 ** 3
+            s["net_traffic"] = f"↓ {down:.2f} GB / ↑ {up:.2f} GB"
+        except (PermissionError, Exception):
+            s["net_traffic"] = "N/A"
 
-        net = psutil.net_io_counters()
-        s["net_down"] = net.bytes_recv / 1024 ** 3
-        s["net_up"] = net.bytes_sent / 1024 ** 3
+        try:
+            boot_time = psutil.boot_time()
+            uptime = time.time() - boot_time
+            days = int(uptime // (24 * 3600))
+            time_part = timedelta(seconds=int(uptime % (24 * 3600)))
 
-        s["os_info"] = self.get_os_info()
-        s["python_ver"] = platform.python_version()
-
-        boot_time = psutil.boot_time()
-        uptime = time.time() - boot_time
-        days = int(uptime // (24 * 3600))
-        time_part = timedelta(seconds=int(uptime % (24 * 3600)))
-
-        if days:
-            day_word = "дней"
-            if not (11 <= days % 100 <= 19):
-                if days % 10 == 1: day_word = "день"
-                elif 2 <= days % 10 <= 4: day_word = "дня"
-            s["uptime_str"] = f"{days} {day_word}, {time_part}"
-        else:
-            s["uptime_str"] = str(time_part)
+            if days:
+                day_word = "дней"
+                if not (11 <= days % 100 <= 19):
+                    if days % 10 == 1: day_word = "день"
+                    elif 2 <= days % 10 <= 4: day_word = "дня"
+                s["uptime_str"] = f"{days} {day_word}, {time_part}"
+            else:
+                s["uptime_str"] = str(time_part)
+        except Exception:
+            s["uptime_str"] = "N/A"
         
         return s
 
