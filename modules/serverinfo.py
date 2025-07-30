@@ -14,8 +14,6 @@
 # *       ║ ⛔️ You CANNOT edit or distribute this file without direct
 # *       ║    permission from the author.
 # *       ╚════════════════════════════════════════════════════════════╝
-# *
-# *
 
 # Name: ServerInfo
 # Author: miyumodules
@@ -24,15 +22,27 @@
 # scope: hikka_only
 # meta developer: @miyumodules
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
-# meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true⠀⠀⠀⠀⠀⠀⠀⠀⠀
+# meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 7)
+__version__ = (1, 0, 8)
 
 import psutil
 import platform
 import time
+import os
+import re
 from datetime import timedelta
 from .. import loader, utils
+
+try:
+    import distro
+except ImportError:
+    distro = None
+
+try:
+    import cpuinfo
+except ImportError:
+    cpuinfo = None
 
 @loader.tds
 class ServerInfoMod(loader.Module):
@@ -107,18 +117,38 @@ class ServerInfoMod(loader.Module):
         ),
     }
 
+    def _get_os_info(self):
+        if distro:
+            os_info = distro.name(pretty=True)
+        elif "com.termux" in os.environ.get("PREFIX", ""):
+            try:
+                android_version = re.search(r"(\d+\.?\d*)", os.popen("getprop ro.build.version.release").read()).group(1)
+                os_info = f"Android {android_version}"
+            except Exception:
+                os_info = "Android (Termux)"
+        else:
+            os_info = platform.system() or "Unknown OS"
+        
+        return os_info
+
+    def _get_cpu_info(self):
+        cpu_name = "Unknown"
+        if cpuinfo:
+            try:
+                cpu_name = cpuinfo.get_cpu_info().get("brand_raw", "Unknown")
+            except Exception:
+                pass
+
+        if cpu_name == "Unknown":
+            cpu_name = platform.processor() or "Unknown"
+
+        return cpu_name
+
     async def get_stats(self):
         s = {}
         s["cpu_load"] = psutil.cpu_percent(interval=0.5)
-        s["cpu_cores"] = psutil.cpu_count(logical=False)
-        try:
-            with open("/proc/cpuinfo") as f:
-                for line in f:
-                    if "model name" in line:
-                        s["cpu_name"] = line.split(":", 1)[1].strip()
-                        break
-        except:
-            s["cpu_name"] = platform.processor() or "Unknown"
+        s["cpu_cores"] = psutil.cpu_count(logical=False) or psutil.cpu_count(logical=True)
+        s["cpu_name"] = self._get_cpu_info()
 
         ram = psutil.virtual_memory()
         s["total_ram"] = ram.total / 1024 ** 3
@@ -133,7 +163,7 @@ class ServerInfoMod(loader.Module):
         s["net_down"] = net.bytes_recv / 1024 ** 3
         s["net_up"] = net.bytes_sent / 1024 ** 3
 
-        s["os_info"] = platform.platform()
+        s["os_info"] = self._get_os_info()
         s["python_ver"] = platform.python_version()
 
         boot_time = psutil.boot_time()
