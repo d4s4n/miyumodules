@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 9)
+__version__ = (1, 1, 0)
 
 import psutil
 import platform
@@ -74,6 +74,15 @@ class ServerInfoMod(loader.Module):
         "btn_refresh": ("🔄 Обновить"),
         "refreshed": ("Обновлено"),
     }
+
+    async def client_ready(self, client, db):
+        self.client = client
+        self.db = db
+        self.channel, _ = await utils.asset_channel(
+            "ServerInfoStorage",
+            "Канал для хранения данных модуля ServerInfo",
+            silent=True,
+        )
 
     async def get_stats(self):
         s = {}
@@ -144,22 +153,33 @@ class ServerInfoMod(loader.Module):
     )
     async def serverinfo(self, message):
         """Show server info"""
+        await utils.answer(message, "...")
         stats = await self.get_stats()
         text = await self.get_text(stats)
         
-        await utils.answer(
-            message,
+        msg = await self.client.send_message(
+            self.channel,
             text,
-            reply_markup=[[
-                {
-                    "text": self.strings("btn_refresh"),
-                    "callback": self.refresh,
-                }
-            ]]
+            buttons=self.client.build_reply_markup([[
+                {"text": self.strings("btn_refresh"), "data": "refresh"}
+            ]]),
+            parse_mode="html"
         )
+        
+        await self.client.forward_messages(message.peer_id, msg)
+        await msg.delete()
+        if message.out:
+            await message.delete()
 
+    @self.callback_handler()
     async def refresh(self, call):
         stats = await self.get_stats()
         text = await self.get_text(stats)
-        await call.edit(text)
+        await call.edit(
+            text,
+            buttons=self.client.build_reply_markup([[
+                {"text": self.strings("btn_refresh"), "data": "refresh"}
+            ]]),
+            parse_mode="html"
+        )
         await call.answer(self.strings("refreshed"))
