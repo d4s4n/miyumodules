@@ -24,12 +24,13 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 7)
+__version__ = (1, 2, 2)
 
 import psutil
 import platform
 import time
 import io
+import logging
 from datetime import timedelta
 from .. import loader, utils
 
@@ -37,6 +38,8 @@ try:
     import matplotlib.pyplot as plt
 except ImportError:
     plt = None
+
+logger = logging.getLogger(__name__)
 
 @loader.tds
 class ServerInfoMod(loader.Module):
@@ -158,27 +161,31 @@ class ServerInfoMod(loader.Module):
     async def create_graph(self, stats):
         if not plt: return None
         
-        plt.style.use("dark_background")
-        fig, ax = plt.subplots(figsize=(6, 4))
-        
-        labels = ["CPU", "RAM", "Disk"]
-        values = [stats["cpu_load"], stats["ram_percent"], stats["disk_percent"]]
-        
-        bars = ax.bar(labels, values, color=["#1f77b4", "#2ca02c", "#d62728"])
-        ax.set_ylim(0, 100)
-        ax.set_ylabel(self.strings("graph_y_label"))
-        ax.set_title(self.strings("graph_title"))
-        ax.grid(axis='y', linestyle='--', alpha=0.7)
+        try:
+            plt.style.use("dark_background")
+            fig, ax = plt.subplots(figsize=(6, 4))
+            
+            labels = ["CPU", "RAM", "Disk"]
+            values = [stats["cpu_load"], stats["ram_percent"], stats["disk_percent"]]
+            
+            bars = ax.bar(labels, values, color=["#1f77b4", "#2ca02c", "#d62728"])
+            ax.set_ylim(0, 100)
+            ax.set_ylabel(self.strings("graph_y_label"))
+            ax.set_title(self.strings("graph_title"))
+            ax.grid(axis='y', linestyle='--', alpha=0.7)
 
-        for bar in bars:
-            yval = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2.0, yval + 2, f'{yval:.1f}%', ha='center', va='bottom')
+            for bar in bars:
+                yval = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2.0, yval + 2, f'{yval:.1f}%', ha='center', va='bottom')
 
-        buf = io.BytesIO()
-        plt.savefig(buf, format='PNG', bbox_inches='tight')
-        plt.close(fig)
-        buf.seek(0)
-        return buf
+            buf = io.BytesIO()
+            plt.savefig(buf, format='PNG', bbox_inches='tight')
+            plt.close(fig)
+            buf.seek(0)
+            return buf
+        except Exception:
+            logger.exception("Graph creation failed!")
+            return None
 
     @loader.command(
         ru_doc="Показать информацию о сервере"
@@ -208,6 +215,10 @@ class ServerInfoMod(loader.Module):
 
         if view_type == "graph":
             graph_image = await self.create_graph(stats)
+            if not graph_image:
+                await call.answer("Failed to create graph, check logs", show_alert=True)
+                return
+
             caption = self.strings("caption").format(**stats)
             btn_data = "text"
             btn_text = self.strings("btn_text")
