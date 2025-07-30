@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 3)
+__version__ = (1, 0, 4)
 
 import psutil, platform, time
 from datetime import timedelta
@@ -32,19 +32,17 @@ from .. import loader, utils
 
 @loader.tds
 class ServerInfoMod(loader.Module):
-    strings = {"name": "ServerInfo"}
+    strings = {
+        "name": "ServerInfo",
+        "description": "<emoji document_id=5228865182410762048>🌟</emoji> Показать информацию о сервере",
+    }
     version = "v{}.{}.{}".format(*__version__)
 
     def __init__(self):
         self.name = self.strings["name"]
 
     async def client_ready(self, client, db):
-        await client.send_message(
-            "me",
-            "📦 <b>ServerInfo</b> <code>v{}</code> активирован!\n"
-            "🖥️ Используй <code>.serverinfo</code> для просмотра данных сервера\n"
-            "<emoji document_id=5228865182410762048>✨</emoji> Автор: <b>@miyumodules</b>".format(*__version__)
-        )
+        pass
 
     async def serverinfocmd(self, message):
         cpu_load = psutil.cpu_percent(interval=1)
