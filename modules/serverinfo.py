@@ -38,9 +38,9 @@ class ServerInfoMod(loader.Module):
 
     strings = {
         "name": "ServerInfo",
-        "info_template": (
+        "info_template_premium": (
             "┎ <b>CPU</b>\n"
-            "┣ <emoji document_id=5172869086727635492>🚵🏾‍♂️</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
+            "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n"
             "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
             "┎ <b>Memory</b>\n"
@@ -53,12 +53,27 @@ class ServerInfoMod(loader.Module):
             "┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>\n"
             "┗ <emoji document_id=5172533495162995360>💻</emoji> <b>Uptime:</b> <code>{uptime_str}</code>"
         ),
+        "info_template_standard": (
+            "┎ <b>CPU</b>\n"
+            "┣ 💻 <b>Model:</b> <code>{cpu_name}</code>\n"
+            "┣ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n"
+            "┗ 📊 <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┎ <b>Memory</b>\n"
+            "┣ 💾 <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>\n"
+            "┗ 💿 <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>\n\n"
+            "┎ <b>Network</b>\n"
+            "┗ 📡 <b>Traffic:</b> <code>↓ {net_down:.2f} GB / ↑ {net_up:.2f} GB</code>\n\n"
+            "┎ <b>System</b>\n"
+            "┣ 🐧 <b>OS:</b> <code>{os_info}</code>\n"
+            "┣ 🐍 <b>Python:</b> <code>{python_ver}</code>\n"
+            "┗ ⏱ <b>Uptime:</b> <code>{uptime_str}</code>"
+        ),
     }
     
     strings_ru = {
         "_cls_doc": "Показывает информацию о сервере, на котором запущен юзербот",
         "_cmd_doc_serverinfo": "Показать информацию о сервере",
-        "info_template": (
+        "info_template_premium": (
             "┎ <b>Процессор</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>\n"
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n"
@@ -72,6 +87,21 @@ class ServerInfoMod(loader.Module):
             "┣ <emoji document_id=5275996452709998361>👩‍💻</emoji> <b>ОС:</b> <code>{os_info}</code>\n"
             "┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>\n"
             "┗ <emoji document_id=5172533495162995360>💻</emoji> <b>Аптайм:</b> <code>{uptime_str}</code>"
+        ),
+        "info_template_standard": (
+            "┎ <b>Процессор</b>\n"
+            "┣ 💻 <b>Модель:</b> <code>{cpu_name}</code>\n"
+            "┣ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
+            "┗ 📊 <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┎ <b>Память</b>\n"
+            "┣ 💾 <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
+            "┗ 💿 <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
+            "┎ <b>Сеть</b>\n"
+            "┗ 📡 <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>\n\n"
+            "┎ <b>Система</b>\n"
+            "┣ 🐧 <b>ОС:</b> <code>{os_info}</code>\n"
+            "┣ 🐍 <b>Python:</b> <code>{python_ver}</code>\n"
+            "┗ ⏱ <b>Аптайм:</b> <code>{uptime_str}</code>"
         ),
     }
 
@@ -128,5 +158,12 @@ class ServerInfoMod(loader.Module):
     async def serverinfo(self, message):
         """Show server info"""
         stats = await self.get_stats()
-        text = self.strings("info_template").format(**stats)
+        me = await message.client.get_me()
+
+        if me.premium or message.is_private:
+            template = self.strings("info_template_premium")
+        else:
+            template = self.strings("info_template_standard")
+
+        text = template.format(**stats)
         await utils.answer(message, text)
