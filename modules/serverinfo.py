@@ -29,8 +29,14 @@ __version__ = (1, 1, 5)
 import psutil
 import platform
 import time
+import io
 from datetime import timedelta
 from .. import loader, utils
+
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    plt = None
 
 @loader.tds
 class ServerInfoMod(loader.Module):
@@ -41,8 +47,7 @@ class ServerInfoMod(loader.Module):
         "info_template_premium": (
             "┎ <b>CPU</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
-            "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n"
-            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>\n\n"
@@ -56,8 +61,7 @@ class ServerInfoMod(loader.Module):
         "info_template_standard": (
             "┎ <b>CPU</b>\n"
             "┣ 💻 <b>Model:</b> <code>{cpu_name}</code>\n"
-            "┣ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n"
-            "┗ 📊 <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┣ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ 💾 <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>\n"
             "┗ 💿 <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>\n\n"
@@ -68,6 +72,9 @@ class ServerInfoMod(loader.Module):
             "┣ 🐍 <b>Python:</b> <code>{python_ver}</code>\n"
             "┗ ⏱ <b>Uptime:</b> <code>{uptime_str}</code>"
         ),
+        "graph_title": "Server Load",
+        "graph_y_label": "Usage (%)",
+        "matplotlib_missing": "<b>Library <code>matplotlib</code> not installed.</b>\nInstall it with <code>.terminal pip install matplotlib</code>",
     }
     
     strings_ru = {
@@ -76,8 +83,7 @@ class ServerInfoMod(loader.Module):
         "info_template_premium": (
             "┎ <b>Процессор</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>\n"
-            "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n"
-            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
@@ -91,8 +97,7 @@ class ServerInfoMod(loader.Module):
         "info_template_standard": (
             "┎ <b>Процессор</b>\n"
             "┣ 💻 <b>Модель:</b> <code>{cpu_name}</code>\n"
-            "┣ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
-            "┗ 📊 <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┣ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ 💾 <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
             "┗ 💿 <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
@@ -103,6 +108,9 @@ class ServerInfoMod(loader.Module):
             "┣ 🐍 <b>Python:</b> <code>{python_ver}</code>\n"
             "┗ ⏱ <b>Аптайм:</b> <code>{uptime_str}</code>"
         ),
+        "graph_title": "Нагрузка на сервер",
+        "graph_y_label": "Использование (%)",
+        "matplotlib_missing": "<b>Библиотека <code>matplotlib</code> не установлена.</b>\nУстановите ее командой <code>.terminal pip install matplotlib</code>",
     }
 
     async def get_stats(self):
@@ -119,10 +127,12 @@ class ServerInfoMod(loader.Module):
             s["cpu_name"] = platform.processor() or "Unknown"
 
         ram = psutil.virtual_memory()
+        s["ram_percent"] = ram.percent
         s["total_ram"] = ram.total / 1024 ** 3
         s["used_ram"] = ram.used / 1024 ** 3
 
         disk = psutil.disk_usage('/')
+        s["disk_percent"] = disk.percent
         s["total_disk"] = disk.total / 1024 ** 3
         s["used_disk"] = disk.used / 1024 ** 3
         s["free_disk"] = disk.free / 1024 ** 3
@@ -148,15 +158,40 @@ class ServerInfoMod(loader.Module):
         else:
             s["uptime_str"] = str(time_part)
         
-        bar = lambda p, w=10: '█' * int(p * w / 100) + '▒' * (w - int(p * w / 100))
-        s["cpu_bar"] = bar(s["cpu_load"])
         return s
+    
+    async def create_graph(self, stats):
+        plt.style.use("dark_background")
+        fig, ax = plt.subplots(figsize=(6, 4))
+        
+        labels = ["CPU", "RAM", "Disk"]
+        values = [stats["cpu_load"], stats["ram_percent"], stats["disk_percent"]]
+        
+        bars = ax.bar(labels, values, color=["#1f77b4", "#2ca02c", "#d62728"])
+        ax.set_ylim(0, 100)
+        ax.set_ylabel(self.strings("graph_y_label"))
+        ax.set_title(self.strings("graph_title"))
+        ax.grid(axis='y', linestyle='--', alpha=0.7)
+
+        for bar in bars:
+            yval = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2.0, yval + 2, f'{yval:.1f}%', ha='center', va='bottom')
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format='PNG', bbox_inches='tight')
+        plt.close(fig)
+        buf.seek(0)
+        return buf
 
     @loader.command(
         ru_doc="Показать информацию о сервере"
     )
     async def serverinfo(self, message):
         """Show server info"""
+        if not plt:
+            await utils.answer(message, self.strings("matplotlib_missing"))
+            return
+
         stats = await self.get_stats()
         me = await message.client.get_me()
 
@@ -164,6 +199,8 @@ class ServerInfoMod(loader.Module):
             template = self.strings("info_template_premium")
         else:
             template = self.strings("info_template_standard")
-
-        text = template.format(**stats)
-        await utils.answer(message, text)
+        
+        graph_image = await self.create_graph(stats)
+        caption = template.format(**stats)
+        
+        await utils.answer(message, caption, file=graph_image)
