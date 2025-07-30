@@ -35,12 +35,6 @@ from .. import loader, utils
 
 @loader.tds
 class ServerInfoMod(loader.Module):
-    strings = {"name": "ServerInfo"}
-    version = "v{}.{}.{}".format(*__version__)
-
-    def __init__(self):
-        self.name = self.strings["name"]
-
     async def client_ready(self, client, db):
         pass
 
@@ -51,9 +45,9 @@ class ServerInfoMod(loader.Module):
         try:
             with open("/proc/cpuinfo") as f:
                 for line in f:
-                    if "model name" in line:
-                        cpu_name = line.split(":", 1)[1].strip()
-                        break
+                     if "model name" in line:
+                         cpu_name = line.split(":", 1)[1].strip()
+                         break
         except:
             cpu_name = platform.processor() or "Неизвестно"
 
@@ -110,7 +104,7 @@ class ServerInfoMod(loader.Module):
             "┎ <b>Система</b>\n"
             f"┣ <b>ОС:</b> <code>{os_info}</code>\n"
             f"┣ <b>Python:</b> <code>{python_ver}</code>\n"
-            f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>"
+            f"┗ <b>Аптайм:</b> <code>{uptime_str}</code>\n"
         )
 
         await utils.answer(message, reply)
