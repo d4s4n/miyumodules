@@ -23,19 +23,19 @@
 
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
+# meta description: Показать информацию о сервере
 
-__version__ = (1, 0, 4)
+__version__ = (1, 0, 5)
 
-import psutil, platform, time
+import psutil
+import platform
+import time
 from datetime import timedelta
 from .. import loader, utils
 
 @loader.tds
 class ServerInfoMod(loader.Module):
-    strings = {
-        "name": "ServerInfo",
-        "description": "<emoji document_id=5228865182410762048>🌟</emoji> Показать информацию о сервере",
-    }
+    strings = {"name": "ServerInfo"}
     version = "v{}.{}.{}".format(*__version__)
 
     def __init__(self):
