@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 0)
+__version__ = (1, 1, 1)
 
 import psutil
 import platform
@@ -160,9 +160,9 @@ class ServerInfoMod(loader.Module):
         msg = await self.client.send_message(
             self.channel,
             text,
-            buttons=self.client.build_reply_markup([[
-                {"text": self.strings("btn_refresh"), "data": "refresh"}
-            ]]),
+            buttons=[[
+                {"text": self.strings("btn_refresh"), "callback": self.refresh}
+            ]],
             parse_mode="html"
         )
         
@@ -171,15 +171,8 @@ class ServerInfoMod(loader.Module):
         if message.out:
             await message.delete()
 
-    @self.callback_handler()
     async def refresh(self, call):
         stats = await self.get_stats()
         text = await self.get_text(stats)
-        await call.edit(
-            text,
-            buttons=self.client.build_reply_markup([[
-                {"text": self.strings("btn_refresh"), "data": "refresh"}
-            ]]),
-            parse_mode="html"
-        )
+        await call.edit(text)
         await call.answer(self.strings("refreshed"))
