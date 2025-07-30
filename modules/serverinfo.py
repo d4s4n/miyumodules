@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 1)
+__version__ = (1, 1, 2)
 
 import psutil
 import platform
@@ -50,11 +50,12 @@ class ServerInfoMod(loader.Module):
 
     strings = {
         "name": "ServerInfo",
+        "disk_template": "{used_disk:.2f} GB (Free: {free_disk:.2f} GB)",
         "info_template_premium": (
             "┎ <b>CPU</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n"
-            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
+            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{ram_usage}</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{disk_usage}</code>\n\n"
@@ -69,7 +70,7 @@ class ServerInfoMod(loader.Module):
             "┎ <b>CPU</b>\n"
             "┣ 💻 <b>Model:</b> <code>{cpu_name}</code>\n"
             "┣ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n"
-            "┗ 📊 <b>Load:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
+            "┗ 📊 <b>Load:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ 💾 <b>RAM:</b> <code>{ram_usage}</code>\n"
             "┗ 💿 <b>Disk:</b> <code>{disk_usage}</code>\n\n"
@@ -85,11 +86,12 @@ class ServerInfoMod(loader.Module):
     strings_ru = {
         "_cls_doc": "Показывает информацию о сервере, на котором запущен юзербот",
         "_cmd_doc_serverinfo": "Показать информацию о сервере",
+        "disk_template": "{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)",
         "info_template_premium": (
             "┎ <b>Процессор</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>\n"
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n"
-            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
+            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{ram_usage}</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{disk_usage}</code>\n\n"
@@ -104,7 +106,7 @@ class ServerInfoMod(loader.Module):
             "┎ <b>Процессор</b>\n"
             "┣ 💻 <b>Модель:</b> <code>{cpu_name}</code>\n"
             "┣ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
-            "┗ 📊 <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
+            "┗ 📊 <b>Нагрузка:</b> <code>{cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ 💾 <b>ОЗУ:</b> <code>{ram_usage}</code>\n"
             "┗ 💿 <b>Диск:</b> <code>{disk_usage}</code>\n\n"
@@ -171,10 +173,9 @@ class ServerInfoMod(loader.Module):
 
         try:
             cpu_load_val = psutil.cpu_percent(interval=0.5)
-            s["cpu_bar"] = '█' * int(cpu_load_val / 10) + '▒' * (10 - int(cpu_load_val / 10))
-            s["cpu_load"] = f"{cpu_load_val:.1f}%"
+            bar = '█' * int(cpu_load_val / 10) + '▒' * (10 - int(cpu_load_val / 10))
+            s["cpu_load"] = f"{bar} {cpu_load_val:.1f}%"
         except (PermissionError, Exception):
-            s["cpu_bar"] = "▒" * 10
             s["cpu_load"] = "N/A"
 
         try:
@@ -192,10 +193,9 @@ class ServerInfoMod(loader.Module):
         
         try:
             disk = psutil.disk_usage('/')
-            total_disk = disk.total / 1024 ** 3
-            used_disk = disk.used / 1024 ** 3
+            used_disk = disk.total / 1024 ** 3
             free_disk = disk.free / 1024 ** 3
-            s["disk_usage"] = f"{used_disk:.2f} GB (Free: {free_disk:.2f} GB)"
+            s["disk_usage"] = self.strings("disk_template").format(used_disk=used_disk, free_disk=free_disk)
         except Exception:
             s["disk_usage"] = "N/A"
 
@@ -215,9 +215,13 @@ class ServerInfoMod(loader.Module):
 
             if days:
                 day_word = "дней"
-                if not (11 <= days % 100 <= 19):
-                    if days % 10 == 1: day_word = "день"
-                    elif 2 <= days % 10 <= 4: day_word = "дня"
+                if self.strings._language == "ru":
+                    if not (11 <= days % 100 <= 19):
+                        if days % 10 == 1: day_word = "день"
+                        elif 2 <= days % 10 <= 4: day_word = "дня"
+                elif days != 1:
+                    day_word = "days"
+
                 s["uptime_str"] = f"{days} {day_word}, {time_part}"
             else:
                 s["uptime_str"] = str(time_part)
