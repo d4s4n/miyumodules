@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 5)
+__version__ = (1, 0, 6)
 
 import psutil
 import platform
@@ -38,73 +38,81 @@ class ServerInfoMod(loader.Module):
 
     strings = {
         "name": "ServerInfo",
-        "server_info_title": "<b>Server Information</b>",
+        "title": "<b>Server Information</b>",
+        "cpu": "<b>CPU:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>",
+        "ram": "<b>RAM:</b> <code>{ram_bar} {used_ram:.2f}/{total_ram:.2f} GB</code>",
+        "disk": "<b>Disk:</b> <code>{disk_bar} {used_disk:.2f}/{total_disk:.2f} GB</code>",
+        "uptime": "<b>Uptime:</b> <code>{uptime_str}</code>",
         "cpu_title": "┎ <b>CPU</b>",
         "cpu_model": "┣ <b>Model:</b> <code>{cpu_name}</code>",
         "cpu_cores": "┣ <b>Cores:</b> <code>{cpu_cores}</code>",
         "cpu_load": "┗ <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>",
         "mem_title": "┎ <b>Memory</b>",
-        "mem_ram": "┣ <b>RAM:</b> <code>{ram_bar} {used_ram:.2f}/{total_ram:.2f} GB</code>",
-        "mem_disk": "┗ <b>Disk:</b> <code>{disk_bar} {used_disk:.2f}/{total_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>",
+        "mem_ram": "┣ <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>",
+        "mem_disk": "┗ <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>",
         "net_title": "┎ <b>Network</b>",
         "net_traffic": "┗ <b>Traffic:</b> <code>↓ {net_down:.2f} GB / ↑ {net_up:.2f} GB</code>",
         "sys_title": "┎ <b>System</b>",
         "sys_os": "┣ <b>OS:</b> <code>{os_info}</code>",
         "sys_python": "┣ <b>Python:</b> <code>{python_ver}</code>",
         "sys_uptime": "┗ <b>Uptime:</b> <code>{uptime_str}</code>",
+        "btn_graph": "📊 График",
+        "btn_text": "📝 Текст",
     }
     
     strings_ru = {
         "_cls_doc": "Показывает информацию о сервере, на котором запущен юзербот",
         "_cmd_doc_serverinfo": "Показать информацию о сервере",
-        "server_info_title": "<b>Информация о сервере</b>",
+        "title": "<b>Информация о сервере</b>",
+        "cpu": "<b>Процессор:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>",
+        "ram": "<b>ОЗУ:</b> <code>{ram_bar} {used_ram:.2f}/{total_ram:.2f} ГБ</code>",
+        "disk": "<b>Диск:</b> <code>{disk_bar} {used_disk:.2f}/{total_disk:.2f} ГБ</code>",
+        "uptime": "<b>Аптайм:</b> <code>{uptime_str}</code>",
         "cpu_title": "┎ <b>Процессор</b>",
         "cpu_model": "┣ <b>Модель:</b> <code>{cpu_name}</code>",
         "cpu_cores": "┣ <b>Ядра:</b> <code>{cpu_cores}</code>",
         "cpu_load": "┗ <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>",
         "mem_title": "┎ <b>Память</b>",
-        "mem_ram": "┣ <b>ОЗУ:</b> <code>{ram_bar} {used_ram:.2f}/{total_ram:.2f} ГБ</code>",
-        "mem_disk": "┗ <b>Диск:</b> <code>{disk_bar} {used_disk:.2f}/{total_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>",
+        "mem_ram": "┣ <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>",
+        "mem_disk": "┗ <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>",
         "net_title": "┎ <b>Сеть</b>",
         "net_traffic": "┗ <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>",
         "sys_title": "┎ <b>Система</b>",
         "sys_os": "┣ <b>ОС:</b> <code>{os_info}</code>",
         "sys_python": "┣ <b>Python:</b> <code>{python_ver}</code>",
         "sys_uptime": "┗ <b>Аптайм:</b> <code>{uptime_str}</code>",
+        "btn_graph": "📊 График",
+        "btn_text": "📝 Текст",
     }
-    
-    @loader.command(
-        ru_doc="Показать информацию о сервере"
-    )
-    async def serverinfo(self, message):
-        """Show server info"""
-        cpu_load = psutil.cpu_percent(interval=1)
-        cpu_cores = psutil.cpu_count(logical=False)
-        cpu_name = "Unknown"
+
+    async def get_stats(self):
+        s = {}
+        s["cpu_load"] = psutil.cpu_percent(interval=0.1)
+        s["cpu_cores"] = psutil.cpu_count(logical=False)
         try:
             with open("/proc/cpuinfo") as f:
                 for line in f:
-                     if "model name" in line:
-                         cpu_name = line.split(":", 1)[1].strip()
-                         break
+                    if "model name" in line:
+                        s["cpu_name"] = line.split(":", 1)[1].strip()
+                        break
         except:
-            cpu_name = platform.processor() or "Unknown"
+            s["cpu_name"] = platform.processor() or "Unknown"
 
         ram = psutil.virtual_memory()
-        total_ram = ram.total / 1024 ** 3
-        used_ram = ram.used / 1024 ** 3
+        s["total_ram"] = ram.total / 1024 ** 3
+        s["used_ram"] = ram.used / 1024 ** 3
 
         disk = psutil.disk_usage('/')
-        total_disk = disk.total / 1024 ** 3
-        used_disk = disk.used / 1024 ** 3
-        free_disk = disk.free / 1024 ** 3
+        s["total_disk"] = disk.total / 1024 ** 3
+        s["used_disk"] = disk.used / 1024 ** 3
+        s["free_disk"] = disk.free / 1024 ** 3
 
         net = psutil.net_io_counters()
-        net_down = net.bytes_recv / 1024 ** 3
-        net_up = net.bytes_sent / 1024 ** 3
+        s["net_down"] = net.bytes_recv / 1024 ** 3
+        s["net_up"] = net.bytes_sent / 1024 ** 3
 
-        os_info = platform.platform()
-        python_ver = platform.python_version()
+        s["os_info"] = platform.platform()
+        s["python_ver"] = platform.python_version()
 
         boot_time = psutil.boot_time()
         uptime = time.time() - boot_time
@@ -112,38 +120,71 @@ class ServerInfoMod(loader.Module):
         time_part = timedelta(seconds=int(uptime % (24 * 3600)))
 
         if days:
-            if 11 <= days % 100 <= 19:
-                day_word = "дней"
-            elif days % 10 == 1:
-                day_word = "день"
-            elif 2 <= days % 10 <= 4:
-                day_word = "дня"
-            else:
-                day_word = "дней"
-            uptime_str = f"{days} {day_word}, {time_part}"
+            day_word = "дней"
+            if not (11 <= days % 100 <= 19):
+                if days % 10 == 1: day_word = "день"
+                elif 2 <= days % 10 <= 4: day_word = "дня"
+            s["uptime_str"] = f"{days} {day_word}, {time_part}"
         else:
-            uptime_str = str(time_part)
+            s["uptime_str"] = str(time_part)
+        
+        bar = lambda p, w=10: '█' * int(p * w / 100) + '▒' * (w - int(p * w / 100))
+        s["cpu_bar"] = bar(s["cpu_load"])
+        s["ram_bar"] = bar(ram.percent)
+        s["disk_bar"] = bar(disk.percent)
+        return s
 
-        bar = lambda p, w=10: '█' * int(p * w // 100) + '▒' * (w - int(p * w // 100))
-        cpu_bar = bar(cpu_load)
-        ram_bar = bar(used_ram / total_ram * 100)
-        disk_bar = bar(used_disk / total_disk * 100)
-
-        reply = (
-            f'{self.strings("server_info_title")}\n\n'
+    async def get_text(self, stats):
+        return (
             f'{self.strings("cpu_title")}\n'
-            f'{self.strings("cpu_model").format(cpu_name=cpu_name)}\n'
-            f'{self.strings("cpu_cores").format(cpu_cores=cpu_cores)}\n'
-            f'{self.strings("cpu_load").format(cpu_bar=cpu_bar, cpu_load=cpu_load)}\n\n'
+            f'{self.strings("cpu_model").format(**stats)}\n'
+            f'{self.strings("cpu_cores").format(**stats)}\n'
+            f'{self.strings("cpu_load").format(**stats)}\n\n'
             f'{self.strings("mem_title")}\n'
-            f'{self.strings("mem_ram").format(ram_bar=ram_bar, used_ram=used_ram, total_ram=total_ram)}\n'
-            f'{self.strings("mem_disk").format(disk_bar=disk_bar, used_disk=used_disk, total_disk=total_disk, free_disk=free_disk)}\n\n'
+            f'{self.strings("mem_ram").format(**stats)}\n'
+            f'{self.strings("mem_disk").format(**stats)}\n\n'
             f'{self.strings("net_title")}\n'
-            f'{self.strings("net_traffic").format(net_down=net_down, net_up=net_up)}\n\n'
+            f'{self.strings("net_traffic").format(**stats)}\n\n'
             f'{self.strings("sys_title")}\n'
-            f'{self.strings("sys_os").format(os_info=os_info)}\n'
-            f'{self.strings("sys_python").format(python_ver=python_ver)}\n'
-            f'{self.strings("sys_uptime").format(uptime_str=uptime_str)}'
+            f'{self.strings("sys_os").format(**stats)}\n'
+            f'{self.strings("sys_python").format(**stats)}\n'
+            f'{self.strings("sys_uptime").format(**stats)}'
+        )
+    
+    async def get_graph(self, stats):
+        return (
+            f'{self.strings("title")}\n\n'
+            f'{self.strings("cpu").format(**stats)}\n'
+            f'{self.strings("ram").format(**stats)}\n'
+            f'{self.strings("disk").format(**stats)}\n'
+            f'{self.strings("uptime").format(**stats)}\n'
         )
 
-        await utils.answer(message, reply)
+    @loader.command(
+        ru_doc="Показать информацию о сервере"
+    )
+    async def serverinfo(self, message):
+        """Show server info"""
+        stats = await self.get_stats()
+        text = await self.get_text(stats)
+        
+        await self.inline.form(
+            message=message,
+            text=text,
+            reply_markup=[[{"text": self.strings("btn_graph"), "callback": self.toggle_view, "data": "graph"}]],
+        )
+
+    async def toggle_view(self, call):
+        view_type = call.data
+        stats = await self.get_stats()
+
+        if view_type == "graph":
+            text = await self.get_graph(stats)
+            btn_data = "text"
+            btn_text = self.strings("btn_text")
+        else:
+            text = await self.get_text(stats)
+            btn_data = "graph"
+            btn_text = self.strings("btn_graph")
+            
+        await call.edit(text, reply_markup=[[{"text": btn_text, "callback": self.toggle_view, "data": btn_data}]])
