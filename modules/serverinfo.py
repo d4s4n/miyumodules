@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 1)
+__version__ = (1, 1, 2)
 
 import psutil
 import platform
@@ -38,51 +38,42 @@ class ServerInfoMod(loader.Module):
 
     strings = {
         "name": "ServerInfo",
-        "cpu_title": ("┎ <b>CPU</b>"),
-        "cpu_model": ("┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>"),
-        "cpu_cores": ("┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>"),
-        "cpu_load": ("┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>"),
-        "mem_title": ("┎ <b>Memory</b>"),
-        "mem_ram": ("┣ <emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>"),
-        "mem_disk": ("┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>"),
-        "net_title": ("┎ <b>Network</b>"),
-        "net_traffic": ("┗ <emoji document_id=5175152196852908642>💻</emoji> <b>Traffic:</b> <code>↓ {net_down:.2f} GB / ↑ {net_up:.2f} GB</code>"),
-        "sys_title": ("┎ <b>System</b>"),
-        "sys_os": ("┣ <emoji document_id=5275996452709998361>👩‍💻</emoji> <b>OS:</b> <code>{os_info}</code>"),
-        "sys_python": ("┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>"),
-        "sys_uptime": ("┗ <emoji document_id=5172533495162995360>💻</emoji> <b>Uptime:</b> <code>{uptime_str}</code>"),
-        "btn_refresh": ("🔄 Refresh"),
-        "refreshed": ("Refreshed"),
+        "cpu_title": "┎ <b>CPU</b>",
+        "cpu_model": "<emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>",
+        "cpu_cores": "<emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>",
+        "cpu_load": "<emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>",
+        "mem_title": "┎ <b>Memory</b>",
+        "mem_ram": "<emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>",
+        "mem_disk": "<emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>",
+        "net_title": "┎ <b>Network</b>",
+        "net_traffic": "<emoji document_id=5175152196852908642>💻</emoji> <b>Traffic:</b> <code>↓ {net_down:.2f} GB / ↑ {net_up:.2f} GB</code>",
+        "sys_title": "┎ <b>System</b>",
+        "sys_os": "<emoji document_id=5275996452709998361>👩‍💻</emoji> <b>OS:</b> <code>{os_info}</code>",
+        "sys_python": "<emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>",
+        "sys_uptime": "<emoji document_id=5172533495162995360>💻</emoji> <b>Uptime:</b> <code>{uptime_str}</code>",
+        "btn_refresh": "🔄 Refresh",
+        "refreshed": "Refreshed",
     }
     
     strings_ru = {
-        "_cls_doc": ("Показывает информацию о сервере, на котором запущен юзербот"),
-        "_cmd_doc_serverinfo": ("Показать информацию о сервере"),
-        "cpu_title": ("┎ <b>Процессор</b>"),
-        "cpu_model": ("┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>"),
-        "cpu_cores": ("┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>"),
-        "cpu_load": ("┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>"),
-        "mem_title": ("┎ <b>Память</b>"),
-        "mem_ram": ("┣ <emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>"),
-        "mem_disk": ("┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>"),
-        "net_title": ("┎ <b>Сеть</b>"),
-        "net_traffic": ("┗ <emoji document_id=5175152196852908642>💻</emoji> <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>"),
-        "sys_title": ("┎ <b>Система</b>"),
-        "sys_os": ("┣ <emoji document_id=5275996452709998361>👩‍💻</emoji> <b>ОС:</b> <code>{os_info}</code>"),
-        "sys_python": ("┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>"),
-        "sys_uptime": ("┗ <emoji document_id=5172533495162995360>💻</emoji> <b>Аптайм:</b> <code>{uptime_str}</code>"),
-        "btn_refresh": ("🔄 Обновить"),
-        "refreshed": ("Обновлено"),
+        "_cls_doc": "Показывает информацию о сервере, на котором запущен юзербот",
+        "_cmd_doc_serverinfo": "Показать информацию о сервере",
+        "cpu_title": "┎ <b>Процессор</b>",
+        "cpu_model": "<emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>",
+        "cpu_cores": "<emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>",
+        "cpu_load": "<emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>",
+        "mem_title": "┎ <b>Память</b>",
+        "mem_ram": "<emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>",
+        "mem_disk": "<emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>",
+        "net_title": "┎ <b>Сеть</b>",
+        "net_traffic": "<emoji document_id=5175152196852908642>💻</emoji> <b>Трафик:</b> <code>↓ {net_down:.2f} ГБ / ↑ {net_up:.2f} ГБ</code>",
+        "sys_title": "┎ <b>Система</b>",
+        "sys_os": "<emoji document_id=5275996452709998361>👩‍💻</emoji> <b>ОС:</b> <code>{os_info}</code>",
+        "sys_python": "<emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>",
+        "sys_uptime": "<emoji document_id=5172533495162995360>💻</emoji> <b>Аптайм:</b> <code>{uptime_str}</code>",
+        "btn_refresh": "🔄 Обновить",
+        "refreshed": "Обновлено",
     }
-
-    async def client_ready(self, client, db):
-        self.client = client
-        self.db = db
-        self.channel, _ = await utils.asset_channel(
-            "ServerInfoStorage",
-            "Канал для хранения данных модуля ServerInfo",
-            silent=True,
-        )
 
     async def get_stats(self):
         s = {}
@@ -131,21 +122,21 @@ class ServerInfoMod(loader.Module):
         s["cpu_bar"] = bar(s["cpu_load"])
         return s
 
-    async def get_text(self, stats):
+    def get_text(self, stats):
         return (
             f'{self.strings("cpu_title")}\n'
-            f'{self.strings("cpu_model").format(**stats)}\n'
-            f'{self.strings("cpu_cores").format(**stats)}\n'
-            f'{self.strings("cpu_load").format(**stats)}\n\n'
+            f'┣ {self.strings("cpu_model").format(**stats)}\n'
+            f'┣ {self.strings("cpu_cores").format(**stats)}\n'
+            f'┗ {self.strings("cpu_load").format(**stats)}\n\n'
             f'{self.strings("mem_title")}\n'
-            f'{self.strings("mem_ram").format(**stats)}\n'
-            f'{self.strings("mem_disk").format(**stats)}\n\n'
+            f'┣ {self.strings("mem_ram").format(**stats)}\n'
+            f'┗ {self.strings("mem_disk").format(**stats)}\n\n'
             f'{self.strings("net_title")}\n'
-            f'{self.strings("net_traffic").format(**stats)}\n\n'
+            f'┗ {self.strings("net_traffic").format(**stats)}\n\n'
             f'{self.strings("sys_title")}\n'
-            f'{self.strings("sys_os").format(**stats)}\n'
-            f'{self.strings("sys_python").format(**stats)}\n'
-            f'{self.strings("sys_uptime").format(**stats)}'
+            f'┣ {self.strings("sys_os").format(**stats)}\n'
+            f'┣ {self.strings("sys_python").format(**stats)}\n'
+            f'┗ {self.strings("sys_uptime").format(**stats)}'
         )
 
     @loader.command(
@@ -153,26 +144,22 @@ class ServerInfoMod(loader.Module):
     )
     async def serverinfo(self, message):
         """Show server info"""
-        await utils.answer(message, "...")
         stats = await self.get_stats()
-        text = await self.get_text(stats)
+        text = self.get_text(stats)
         
-        msg = await self.client.send_message(
-            self.channel,
+        await utils.answer(
+            message,
             text,
-            buttons=[[
-                {"text": self.strings("btn_refresh"), "callback": self.refresh}
-            ]],
-            parse_mode="html"
+            reply_markup=[[
+                {
+                    "text": self.strings("btn_refresh"),
+                    "callback": self.refresh,
+                }
+            ]]
         )
-        
-        await self.client.forward_messages(message.peer_id, msg)
-        await msg.delete()
-        if message.out:
-            await message.delete()
 
     async def refresh(self, call):
         stats = await self.get_stats()
-        text = await self.get_text(stats)
+        text = self.get_text(stats)
         await call.edit(text)
         await call.answer(self.strings("refreshed"))
