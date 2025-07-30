@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 2, 0)
+__version__ = (1, 2, 1)
 
 import psutil
 import platform
@@ -33,9 +33,10 @@ import io
 from datetime import timedelta
 from .. import loader, utils
 
-loader.require("matplotlib")
-
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    plt = None
 
 @loader.tds
 class ServerInfoMod(loader.Module):
@@ -61,6 +62,7 @@ class ServerInfoMod(loader.Module):
         "btn_text": "📝 Текст",
         "graph_title": "Server Load",
         "graph_y_label": "Usage (%)",
+        "matplotlib_missing": "<emoji document_id=5312526098750252863>🚫</emoji> <b>Необходима библиотека <code>matplotlib</code>.</b>\nУстановите ее командой <code>.terminal pip install matplotlib</code>",
     }
     
     strings_ru = {
@@ -84,6 +86,7 @@ class ServerInfoMod(loader.Module):
         "btn_text": "📝 Текст",
         "graph_title": "Нагрузка на сервер",
         "graph_y_label": "Использование (%)",
+        "matplotlib_missing": "<emoji document_id=5312526098750252863>🚫</emoji> <b>Необходима библиотека <code>matplotlib</code>.</b>\nУстановите ее командой <code>.terminal pip install matplotlib</code>",
     }
 
     async def get_stats(self):
@@ -153,6 +156,8 @@ class ServerInfoMod(loader.Module):
         )
 
     async def create_graph(self, stats):
+        if not plt: return None
+        
         plt.style.use("dark_background")
         fig, ax = plt.subplots(figsize=(6, 4))
         
@@ -180,6 +185,10 @@ class ServerInfoMod(loader.Module):
     )
     async def serverinfo(self, message):
         """Show server info"""
+        if not plt:
+            await utils.answer(message, self.strings("matplotlib_missing"))
+            return
+
         stats = await self.get_stats()
         text = await self.get_text_view(stats)
         
@@ -190,6 +199,10 @@ class ServerInfoMod(loader.Module):
         )
 
     async def toggle_view(self, call):
+        if not plt:
+            await call.answer(self.strings("matplotlib_missing"))
+            return
+
         view_type = call.data
         stats = await self.get_stats()
 
