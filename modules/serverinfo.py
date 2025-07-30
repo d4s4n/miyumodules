@@ -21,8 +21,8 @@
 # .serverinfo
 # scope: hikka_only
 # meta developer: @miyumodules
-# meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
-# meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
+# meta pic: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/pfp.png
+# meta banner: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/banner.png
 
 __version__ = (1, 1, 4)
 
