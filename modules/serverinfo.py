@@ -117,7 +117,7 @@ class ServerInfoMod(loader.Module):
         ),
     }
 
-    def _get_os_info(self):
+    def get_os_info(self):
         if distro:
             os_info = distro.name(pretty=True)
         elif "com.termux" in os.environ.get("PREFIX", ""):
@@ -127,28 +127,43 @@ class ServerInfoMod(loader.Module):
             except Exception:
                 os_info = "Android (Termux)"
         else:
-            os_info = platform.system() or "Unknown OS"
+            os_info = f"{platform.system()} {platform.release()}" or "Unknown OS"
         
         return os_info
 
-    def _get_cpu_info(self):
-        cpu_name = "Unknown"
+    def get_cpu_info(self):
+        if platform.system() == "Linux":
+            try:
+                with open("/proc/cpuinfo") as f:
+                    for line in f:
+                        if "model name" in line:
+                            return line.split(":", 1)[1].strip()
+            except Exception:
+                pass
+        
         if cpuinfo:
             try:
-                cpu_name = cpuinfo.get_cpu_info().get("brand_raw", "Unknown")
+                info = cpuinfo.get_cpu_info()
+                name = info.get("brand_raw")
+                if name:
+                    return name
             except Exception:
                 pass
 
-        if cpu_name == "Unknown":
-            cpu_name = platform.processor() or "Unknown"
-
-        return cpu_name
+        try:
+            name = platform.processor()
+            if name and name != "Unknown":
+                return name
+        except Exception:
+            pass
+        
+        return "Unknown"
 
     async def get_stats(self):
         s = {}
         s["cpu_load"] = psutil.cpu_percent(interval=0.5)
         s["cpu_cores"] = psutil.cpu_count(logical=False) or psutil.cpu_count(logical=True)
-        s["cpu_name"] = self._get_cpu_info()
+        s["cpu_name"] = self.get_cpu_info()
 
         ram = psutil.virtual_memory()
         s["total_ram"] = ram.total / 1024 ** 3
@@ -163,7 +178,7 @@ class ServerInfoMod(loader.Module):
         s["net_down"] = net.bytes_recv / 1024 ** 3
         s["net_up"] = net.bytes_sent / 1024 ** 3
 
-        s["os_info"] = self._get_os_info()
+        s["os_info"] = self.get_os_info()
         s["python_ver"] = platform.python_version()
 
         boot_time = psutil.boot_time()
