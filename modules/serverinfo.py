@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 5)
+__version__ = (1, 1, 6)
 
 import psutil
 import platform
@@ -44,6 +44,7 @@ class ServerInfoMod(loader.Module):
 
     strings = {
         "name": "ServerInfo",
+        "loading": "<i>Loading server data...</i>",
         "info_template_premium": (
             "┎ <b>CPU</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
@@ -80,6 +81,7 @@ class ServerInfoMod(loader.Module):
     strings_ru = {
         "_cls_doc": "Показывает информацию о сервере, на котором запущен юзербот",
         "_cmd_doc_serverinfo": "Показать информацию о сервере",
+        "loading": "<i>Собираю данные о сервере...</i>",
         "info_template_premium": (
             "┎ <b>Процессор</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>\n"
@@ -191,6 +193,8 @@ class ServerInfoMod(loader.Module):
         if not plt:
             await utils.answer(message, self.strings("matplotlib_missing"))
             return
+        
+        msg = await utils.answer(message, self.strings("loading"))
 
         stats = await self.get_stats()
         me = await message.client.get_me()
@@ -203,4 +207,4 @@ class ServerInfoMod(loader.Module):
         graph_image = await self.create_graph(stats)
         caption = template.format(**stats)
         
-        await utils.answer(message, caption, file=graph_image)
+        await utils.answer(msg, caption, file=graph_image)
