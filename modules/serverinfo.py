@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 9)
+__version__ = (1, 1, 0)
 
 import psutil
 import platform
@@ -54,7 +54,7 @@ class ServerInfoMod(loader.Module):
             "┎ <b>CPU</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Model:</b> <code>{cpu_name}</code>\n"
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Cores:</b> <code>{cpu_cores}</code>\n"
-            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Load:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>\n\n"
@@ -69,7 +69,7 @@ class ServerInfoMod(loader.Module):
             "┎ <b>CPU</b>\n"
             "┣ 💻 <b>Model:</b> <code>{cpu_name}</code>\n"
             "┣ ⚙️ <b>Cores:</b> <code>{cpu_cores}</code>\n"
-            "┗ 📊 <b>Load:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┗ 📊 <b>Load:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Memory</b>\n"
             "┣ 💾 <b>RAM:</b> <code>{used_ram:.2f}/{total_ram:.2f} GB</code>\n"
             "┗ 💿 <b>Disk:</b> <code>{used_disk:.2f} GB (Free: {free_disk:.2f} GB)</code>\n\n"
@@ -89,7 +89,7 @@ class ServerInfoMod(loader.Module):
             "┎ <b>Процессор</b>\n"
             "┣ <emoji document_id=5172869086727635492>💻</emoji> <b>Модель:</b> <code>{cpu_name}</code>\n"
             "┣ <emoji document_id=5172839378438849164>💻</emoji> <b>Ядра:</b> <code>{cpu_cores}</code>\n"
-            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┗ <emoji document_id=5174983383163339593>💻</emoji> <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ <emoji document_id=5174693704799093859>💻</emoji> <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
             "┗ <emoji document_id=5175135107178038706>💻</emoji> <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
@@ -104,7 +104,7 @@ class ServerInfoMod(loader.Module):
             "┎ <b>Процессор</b>\n"
             "┣ 💻 <b>Модель:</b> <code>{cpu_name}</code>\n"
             "┣ ⚙️ <b>Ядра:</b> <code>{cpu_cores}</code>\n"
-            "┗ 📊 <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load:.1f}%</code>\n\n"
+            "┗ 📊 <b>Нагрузка:</b> <code>{cpu_bar} {cpu_load}</code>\n\n"
             "┎ <b>Память</b>\n"
             "┣ 💾 <b>ОЗУ:</b> <code>{used_ram:.2f}/{total_ram:.2f} ГБ</code>\n"
             "┗ 💿 <b>Диск:</b> <code>{used_disk:.2f} ГБ (Свободно: {free_disk:.2f} ГБ)</code>\n\n"
@@ -161,7 +161,14 @@ class ServerInfoMod(loader.Module):
 
     async def get_stats(self):
         s = {}
-        s["cpu_load"] = psutil.cpu_percent(interval=0.5)
+        try:
+            cpu_load_val = psutil.cpu_percent(interval=0.5)
+            s["cpu_bar"] = '█' * int(cpu_load_val / 10) + '▒' * (10 - int(cpu_load_val / 10))
+            s["cpu_load"] = f"{cpu_load_val:.1f}%"
+        except PermissionError:
+            s["cpu_bar"] = "▒" * 10
+            s["cpu_load"] = "N/A"
+
         s["cpu_cores"] = psutil.cpu_count(logical=False) or psutil.cpu_count(logical=True)
         s["cpu_name"] = self.get_cpu_info()
 
@@ -195,8 +202,6 @@ class ServerInfoMod(loader.Module):
         else:
             s["uptime_str"] = str(time_part)
         
-        bar = lambda p, w=10: '█' * int(p * w / 100) + '▒' * (w - int(p * w / 100))
-        s["cpu_bar"] = bar(s["cpu_load"])
         return s
 
     @loader.command(
