@@ -26,9 +26,7 @@
 
 __version__ = (1, 0, 2)
 
-import psutil
-import platform
-import time
+import psutil, platform, time
 from datetime import timedelta
 from .. import loader, utils
 
@@ -41,20 +39,11 @@ class ServerInfoMod(loader.Module):
         self.name = self.strings["name"]
 
     async def client_ready(self, client, db):
-        await self.inline.bot.send_message(
-            "@HikkaUserbot",
-            f"🖥️ <b>Модуль ServerInfo ({self.version}) загружен ( ･ω･)ﾉ</b>\n"
-            "ℹ️ Получение информации о сервере\n\n"
-            "▫️ <code>.serverinfo</code> - Показать информацию о сервере\n\n"
-            "🫶 Разработчик: @miyumodules",
-            parse_mode="HTML",
-            disable_web_page_preview=True
-        )
+        pass
 
     async def serverinfocmd(self, message):
         cpu_load = psutil.cpu_percent(interval=1)
         cpu_cores = psutil.cpu_count(logical=False)
-
         cpu_name = "Неизвестно"
         try:
             with open("/proc/cpuinfo") as f:
@@ -66,17 +55,17 @@ class ServerInfoMod(loader.Module):
             cpu_name = platform.processor() or "Неизвестно"
 
         ram = psutil.virtual_memory()
-        total_ram = ram.total / 1024**3
-        used_ram = ram.used / 1024**3
+        total_ram = ram.total / 1024 ** 3
+        used_ram = ram.used / 1024 ** 3
 
         disk = psutil.disk_usage('/')
-        total_disk = disk.total / 1024**3
-        used_disk = disk.used / 1024**3
-        free_disk = disk.free / 1024**3
+        total_disk = disk.total / 1024 ** 3
+        used_disk = disk.used / 1024 ** 3
+        free_disk = disk.free / 1024 ** 3
 
         net = psutil.net_io_counters()
-        net_down = net.bytes_recv / 1024**3
-        net_up = net.bytes_sent / 1024**3
+        net_down = net.bytes_recv / 1024 ** 3
+        net_up = net.bytes_sent / 1024 ** 3
 
         os_info = platform.platform()
         python_ver = platform.python_version()
@@ -100,7 +89,6 @@ class ServerInfoMod(loader.Module):
             uptime_str = str(time_part)
 
         bar = lambda p, w=10: '█' * int(p * w // 100) + '▒' * (w - int(p * w // 100))
-
         cpu_bar = bar(cpu_load)
         ram_bar = bar(used_ram / total_ram * 100)
         disk_bar = bar(used_disk / total_disk * 100)
