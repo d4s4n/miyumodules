@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 4)
+__version__ = (1, 1, 5)
 
 import psutil
 import platform
@@ -53,8 +53,6 @@ class ServerInfoMod(loader.Module):
             "┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>\n"
             "┗ <emoji document_id=5172533495162995360>💻</emoji> <b>Uptime:</b> <code>{uptime_str}</code>"
         ),
-        "btn_refresh": "🔄 Refresh",
-        "refreshed": "Refreshed",
     }
     
     strings_ru = {
@@ -75,8 +73,6 @@ class ServerInfoMod(loader.Module):
             "┣ <emoji document_id=5276529733029339480>👩‍💻</emoji> <b>Python:</b> <code>{python_ver}</code>\n"
             "┗ <emoji document_id=5172533495162995360>💻</emoji> <b>Аптайм:</b> <code>{uptime_str}</code>"
         ),
-        "btn_refresh": "🔄 Обновить",
-        "refreshed": "Обновлено",
     }
 
     async def get_stats(self):
@@ -133,28 +129,4 @@ class ServerInfoMod(loader.Module):
         """Show server info"""
         stats = await self.get_stats()
         text = self.strings("info_template").format(**stats)
-        
-        await utils.answer(
-            message,
-            text,
-            reply_markup=[[
-                {
-                    "text": self.strings("btn_refresh"),
-                    "callback": self.refresh,
-                }
-            ]]
-        )
-
-    async def refresh(self, call):
-        stats = await self.get_stats()
-        text = self.strings("info_template").format(**stats)
-        await call.edit(
-            text,
-            reply_markup=[[
-                {
-                    "text": self.strings("btn_refresh"),
-                    "callback": self.refresh,
-                }
-            ]]
-        )
-        await call.answer(self.strings("refreshed"))
+        await utils.answer(message, text)
