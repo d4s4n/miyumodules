@@ -15,7 +15,7 @@
 # *       ║    permission from the author.
 # *       ╚════════════════════════════════════════════════════════════╝
 
-# Name: Standoff2Decryptor
+# Name: SO2Decryptor
 # Author: miyumodules
 # Commands:
 # .decmeta
@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 6)
+__version__ = (1, 0, 7)
 
 import os
 import struct
@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class Standoff2DecryptorMod(loader.Module):
-    """Standoff 2 metadata decryptor. Based on https://github.com/Michel-M-code/Metadata-Decryptor/ script."""
+    """Standoff 2 metadata decryptor. Based on <a href="https://github.com/Michel-M-code/Metadata-Decryptor/">Michel-M-code</a>'s script."""
 
     strings = {
         "name": "Standoff2Decryptor",
@@ -67,7 +67,7 @@ class Standoff2DecryptorMod(loader.Module):
     }
 
     strings_ru = {
-        "_cls_doc": "Дешифратор metadata для Standoff 2. На основе скрипта от https://github.com/Michel-M-code/Metadata-Decryptor/",
+        "_cls_doc": "Дешифратор metadata для Standoff 2. На основе скрипта от <a href='https://github.com/Michel-M-code/Metadata-Decryptor/'>Michel-M-code</a>.",
         "_cmd_doc_decmeta": "<ответом на файл / с файлом> - Расшифровать libunity.so",
         "no_lib": "<b>[SO2Decryptor]</b> Библиотека <code>pyelftools</code> не установлена.\nУстановите ее командой <code>.terminal pip install pyelftools</code>",
         "already_running": "<b>[SO2Decryptor]</b> Процесс дешифровки уже запущен. Пожалуйста, подождите.",
@@ -133,11 +133,10 @@ class Standoff2DecryptorMod(loader.Module):
 
             with open(lib_path, "rb") as f:
                 if f.read(4) != b"\x7fELF":
-                    await utils.answer(
-                        msg,
+                    await msg.edit(
                         self.strings(
                             "not_elf_premium" if use_prem else "not_elf_standard"
-                        ),
+                        )
                     )
                     return
 
@@ -152,6 +151,8 @@ class Standoff2DecryptorMod(loader.Module):
                 None, self.run_decryptor, lib_path
             )
 
+            await msg.delete()
+
             if decrypted_data:
                 out_path = os.path.join(tmp_dir, "decrypted-metadata.dat")
                 with open(out_path, "wb") as f:
@@ -164,21 +165,19 @@ class Standoff2DecryptorMod(loader.Module):
                         "success_premium" if use_prem else "success_standard"
                     ),
                 )
-                if msg.out:
-                    await msg.delete()
-
             else:
-                await msg.edit(
+                await self.client.send_message(
+                    message.chat_id,
                     self.strings(
                         "no_candidates_premium"
                         if use_prem
                         else "no_candidates_standard"
-                    )
+                    ),
                 )
 
         except Exception as e:
             logger.exception("Decryption failed")
-            if "msg" in locals():
+            if "msg" in locals() and not msg.is_deleted:
                 await msg.edit(
                     self.strings(
                         "fail_premium" if use_prem else "fail_standard"
