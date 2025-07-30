@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 7)
+__version__ = (1, 0, 8)
 
 import psutil
 import platform
@@ -147,14 +147,15 @@ class ServerInfoMod(loader.Module):
         stats = await self.get_stats()
         text = await self.get_text(stats)
         
-        await self.inline.form(
-            message=message,
-            text=text,
-            reply_markup=[[{"text": self.strings("btn_refresh"), "callback": self.refresh}]],
+        button = self.inline.button(
+            self.strings("btn_refresh"),
+            callback=self.refresh
         )
+        
+        await utils.answer(message, text, reply_markup=[[button]])
 
     async def refresh(self, call):
         stats = await self.get_stats()
         text = await self.get_text(stats)
-        await call.edit(text, reply_markup=call.message.reply_markup)
+        await call.edit(text)
         await call.answer(self.strings("refreshed"))
