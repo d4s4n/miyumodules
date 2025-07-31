@@ -24,7 +24,7 @@
 # meta pic: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/pfp.png
 # meta banner: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/banner.png
 
-__version__ = (1, 1, 1)
+__version__ = (1, 0, 5)
 
 import time
 import asyncio
@@ -40,6 +40,12 @@ class FormatterMod(loader.Module):
 
     strings = {
         "name": "Formatter",
+        "fmt_names": {
+            "mono": "Monospace",
+            "bold": "Bold",
+            "italic": "Italic",
+            "spoiler": "Spoiler",
+        },
         "set_fmt": {
             "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> <i>{example}</i>",
             "standard": "✅ <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> <i>{example}</i>",
@@ -49,16 +55,16 @@ class FormatterMod(loader.Module):
             "standard": "🗑 <b>Formatter is now off</b>",
         },
         "status_on": {
-            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> <i>{example}</i>\n\nTo turn off, use: <code>.fmt off</code>",
-            "standard": "ℹ️ <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> <i>{example}</i>\n\nTo turn off, use: <code>.fmt off</code>",
+            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> <i>{example}</i>\n\n<b>Available:</b> {avail_fmts}",
+            "standard": "ℹ️ <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> <i>{example}</i>\n\n<b>Available:</b> {avail_fmts}",
         },
         "status_off": {
-            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Formatter is OFF</b>",
-            "standard": "ℹ️ <b>Formatter is OFF</b>",
+            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Formatter is OFF</b>\n\n<b>Available:</b> {avail_fmts}",
+            "standard": "ℹ️ <b>Formatter is OFF</b>\n\n<b>Available:</b> {avail_fmts}",
         },
         "invalid_format": {
-            "premium": "<emoji document_id=5287611315588707430>❌</emoji> <b>Invalid format.</b>\nAvailable: <code>mono</code>, <code>bold</code>, <code>italic</code>, <code>spoiler</code>",
-            "standard": "❌ <b>Invalid format.</b>\nAvailable: <code>mono</code>, <code>bold</code>, <code>italic</code>, <code>spoiler</code>",
+            "premium": "<emoji document_id=5287611315588707430>❌</emoji> <b>Invalid format.</b>\nAvailable: {avail_fmts}",
+            "standard": "❌ <b>Invalid format.</b>\nAvailable: {avail_fmts}",
         },
         "spam_detected": {
             "premium": "<emoji document_id=5287740598399285194>😵‍💫</emoji> <b>Spam detected!</b> Formatter has been disabled.",
@@ -86,6 +92,12 @@ class FormatterMod(loader.Module):
         "_cls_doc": "Автоматически форматирует ваши исходящие сообщения с продвинутой защитой от спама",
         "_cmd_doc_fmt": "<формат / off> - Установить или выключить авто-форматирование",
         "_cmd_doc_fmtspam": "<on / off> - Включить или выключить защиту от спама",
+        "fmt_names": {
+            "mono": "Моно",
+            "bold": "Жирный",
+            "italic": "Курсив",
+            "spoiler": "Спойлер",
+        },
         "set_fmt": {
             "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> <i>{example}</i>",
             "standard": "✅ <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> <i>{example}</i>",
@@ -95,16 +107,16 @@ class FormatterMod(loader.Module):
             "standard": "🗑 <b>Форматирование отключено</b>",
         },
         "status_on": {
-            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> <i>{example}</i>\n\nЧтобы выключить, используй: <code>.fmt off</code>",
-            "standard": "ℹ️ <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> <i>{example}</i>\n\nЧтобы выключить, используй: <code>.fmt off</code>",
+            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> <i>{example}</i>\n\n<b>Доступно:</b> {avail_fmts}",
+            "standard": "ℹ️ <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> <i>{example}</i>\n\n<b>Доступно:</b> {avail_fmts}",
         },
         "status_off": {
-            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Форматирование ВЫКЛЮЧЕНО</b>",
-            "standard": "ℹ️ <b>Форматирование ВЫКЛЮЧЕНО</b>",
+            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Форматирование ВЫКЛЮЧЕНО</b>\n\n<b>Доступно:</b> {avail_fmts}",
+            "standard": "ℹ️ <b>Форматирование ВЫКЛЮЧЕНО</b>\n\n<b>Доступно:</b> {avail_fmts}",
         },
         "invalid_format": {
-            "premium": "<emoji document_id=5287611315588707430>❌</emoji> <b>Неверный тип.</b>\nДоступные: <code>моно</code>, <code>жирный</code>, <code>курсив</code>, <code>спойлер</code>",
-            "standard": "❌ <b>Неверный тип.</b>\nДоступные: <code>моно</code>, <code>жирный</code>, <code>курсив</code>, <code>спойлер</code>",
+            "premium": "<emoji document_id=5287611315588707430>❌</emoji> <b>Неверный тип.</b>\nДоступные: {avail_fmts}",
+            "standard": "❌ <b>Неверный тип.</b>\nДоступные: {avail_fmts}",
         },
         "spam_detected": {
             "premium": "<emoji document_id=5287740598399285194>😵‍💫</emoji> <b>Обнаружен спам!</b> Форматирование отключено.",
@@ -161,28 +173,15 @@ class FormatterMod(loader.Module):
         if self.db.get("Formatter", "spam_protection", None) is None:
             self.db.set("Formatter", "spam_protection", True)
 
+    def get_string(self, key, use_prem, **kwargs):
+        return self.strings(key)["premium" if use_prem else "standard"].format(**kwargs)
+
     def get_fmt_info(self, mode):
-        if self.strings._language == "ru":
-            names = {
-                "mono": "Моно",
-                "bold": "Жирный",
-                "italic": "Курсив",
-                "spoiler": "Спойлер",
-            }
-        else:
-            names = {
-                "mono": "Monospace",
-                "bold": "Bold",
-                "italic": "Italic",
-                "spoiler": "Spoiler",
-            }
+        names = self.strings("fmt_names")
         md = self.formats.get(mode, "")
         name = names.get(mode, "Unknown")
         example = f"{md}Text example{md}"
         return name, example
-
-    def get_string(self, key, use_prem):
-        return self.strings(key)["premium" if use_prem else "standard"]
 
     def is_trivial(self, msg):
         return bool(re.match(r"^(.)\1+$", msg) or re.match(r"^(..+?)\1+$", msg))
@@ -217,22 +216,31 @@ class FormatterMod(loader.Module):
         now = time.time()
         self.msg_history.append({"msg": "", "time": now})
         for window in self.spam_config["windows"]:
-            in_window = [
-                m for m in self.msg_history if now - m["time"] <= window["duration"]
-            ]
-            if len(in_window) > window["limit"]:
+            if (
+                len(
+                    [
+                        m
+                        for m in self.msg_history
+                        if now - m["time"] <= window["duration"]
+                    ]
+                )
+                > window["limit"]
+            ):
                 return True
+
         short_window_msgs = [
             m["msg"]
             for m in self.msg_history
             if now - m["time"] <= self.spam_config["windows"][0]["duration"]
         ]
-        if (
-            len(short_window_msgs) > self.spam_config["trivial_limit"]
-            and sum(1 for msg in short_window_msgs if self.is_trivial(msg))
-            > self.spam_config["trivial_limit"]
-        ):
-            return True
+
+        if len(short_window_msgs) > self.spam_config["trivial_limit"]:
+            if (
+                sum(1 for msg in short_window_msgs if self.is_trivial(msg))
+                > self.spam_config["trivial_limit"]
+            ):
+                return True
+
         if len(short_window_msgs) > self.spam_config["similarity_threshold"]:
             similar_count = sum(
                 1
@@ -249,23 +257,34 @@ class FormatterMod(loader.Module):
         use_prem = self.me.premium or message.is_private
         args = utils.get_args_raw(message).lower()
         mode = self.db.get("Formatter", "mode", "off")
+        avail_fmts = ", ".join(f"<code>{f}</code>" for f in self.formats)
 
         if not args:
             if mode == "off":
-                await utils.answer(message, self.get_string("status_off", use_prem))
+                await utils.answer(
+                    message,
+                    self.get_string("status_off", use_prem, avail_fmts=avail_fmts),
+                )
             else:
                 fmt_name, example = self.get_fmt_info(mode)
                 await utils.answer(
                     message,
-                    self.get_string("status_on", use_prem).format(
-                        fmt_name=fmt_name, example=example
+                    self.get_string(
+                        "status_on",
+                        use_prem,
+                        fmt_name=fmt_name,
+                        example=example,
+                        avail_fmts=avail_fmts,
                     ),
                 )
             return
 
         target_mode = self.aliases.get(args)
         if not target_mode or target_mode == "on":
-            await utils.answer(message, self.get_string("invalid_format", use_prem))
+            await utils.answer(
+                message,
+                self.get_string("invalid_format", use_prem, avail_fmts=avail_fmts),
+            )
             return
 
         self.db.set("Formatter", "mode", target_mode)
@@ -276,8 +295,8 @@ class FormatterMod(loader.Module):
             fmt_name, example = self.get_fmt_info(target_mode)
             await utils.answer(
                 message,
-                self.get_string("set_fmt", use_prem).format(
-                    fmt_name=fmt_name, example=example
+                self.get_string(
+                    "set_fmt", use_prem, fmt_name=fmt_name, example=example
                 ),
             )
 
@@ -294,11 +313,15 @@ class FormatterMod(loader.Module):
 
         choice = self.aliases.get(args)
         if choice not in ["on", "off"]:
-            await utils.answer(message, self.get_string("invalid_format", use_prem))
+            await utils.answer(
+                message,
+                self.get_string("invalid_format", use_prem, avail_fmts="on, off"),
+            )
             return
 
         new_state = choice == "on"
         self.db.set("Formatter", "spam_protection", new_state)
+
         key = "spam_on" if new_state else "spam_off"
         await utils.answer(message, self.get_string(key, use_prem))
 
@@ -310,13 +333,12 @@ class FormatterMod(loader.Module):
         if mode == "off":
             return
 
-        if message.is_channel:
-            return
-
         chat = await message.get_chat()
-        if getattr(chat, "is_self", False):
-            return
-        if getattr(chat, "bot", False):
+        if (
+            message.is_channel
+            or getattr(chat, "is_self", False)
+            or getattr(chat, "bot", False)
+        ):
             return
 
         text = message.text
