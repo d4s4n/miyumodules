@@ -33,7 +33,6 @@ import re
 from collections import deque
 from .. import loader, utils
 
-
 @loader.tds
 class FormatterMod(loader.Module):
     """Automatically formats your outgoing messages with advanced spam protection"""
@@ -68,7 +67,7 @@ class FormatterMod(loader.Module):
             "standard": "❌ <b>Invalid format.</b>\nAvailable: {avail_fmts}",
         },
         "spam_detected": {
-            "premium": "<emoji document_id=5287740598399285194>😵‍💫</emoji> <b>Spam detected!</b> Formatter has been disabled.",
+            "premium": "<emoji document_id=5418144562944171366>⚠️</emoji> <b>Spam detected!</b> Formatter has been disabled.",
             "standard": "😵‍💫 <b>Spam detected!</b> Formatter has been disabled.",
         },
         "spam_on": {
@@ -121,7 +120,7 @@ class FormatterMod(loader.Module):
             "standard": "❌ <b>Неверный тип.</b>\nДоступные: {avail_fmts}",
         },
         "spam_detected": {
-            "premium": "<emoji document_id=5287740598399285194>😵‍💫</emoji> <b>Обнаружен спам!</b> Форматирование отключено.",
+            "premium": "<emoji document_id=5418144562944171366>⚠️</emoji> <b>Обнаружен спам!</b> Форматирование отключено.",
             "standard": "😵‍💫 <b>Обнаружен спам!</b> Форматирование отключено.",
         },
         "spam_on": {
