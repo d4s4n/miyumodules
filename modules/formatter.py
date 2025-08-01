@@ -33,7 +33,6 @@ import re
 from collections import deque
 from .. import loader, utils
 
-
 @loader.tds
 class FormatterMod(loader.Module):
     """Automatically formats your outgoing messages with advanced spam protection"""
