@@ -46,6 +46,7 @@ class FormatterMod(loader.Module):
             "italic": "Italic",
             "spoiler": "Spoiler",
         },
+        "example_text": "Text example",
         "set_fmt": {
             "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> <i>{example}</i>",
             "standard": "✅ <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> <i>{example}</i>",
@@ -98,6 +99,7 @@ class FormatterMod(loader.Module):
             "italic": "Курсив",
             "spoiler": "Спойлер",
         },
+        "example_text": "Пример текста",
         "set_fmt": {
             "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> <i>{example}</i>",
             "standard": "✅ <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> <i>{example}</i>",
@@ -180,6 +182,8 @@ class FormatterMod(loader.Module):
         self.db = db
         self.client = client
         self.me = await client.get_me()
+        if self.db.get("Formatter", "mode", None) is None:
+            self.db.set("Formatter", "mode", "off")
         if self.db.get("Formatter", "spam_protection", None) is None:
             self.db.set("Formatter", "spam_protection", True)
 
@@ -189,9 +193,9 @@ class FormatterMod(loader.Module):
     def get_fmt_info(self, mode):
         names = self.strings("fmt_names")
         tag = self.html_formats.get(mode, "")
-        end_tag = f"</{tag[1:]}" if tag else ""
+        end_tag = f"</{tag[1:]}>" if tag else ""
         name = names.get(mode, "Unknown")
-        example = f"{tag}Text example{end_tag}"
+        example = f"{tag}{self.strings('example_text')}{end_tag}"
         return name, example
 
     def is_trivial(self, msg):
@@ -223,8 +227,9 @@ class FormatterMod(loader.Module):
         union = len(words1.union(words2))
         return (intersection / union) > 0.4 if union > 0 else False
 
-    def check_spam(self):
+    def check_spam(self, text):
         now = time.time()
+        self.msg_history.append({"msg": text, "time": now})
         for window in self.spam_config["windows"]:
             if (
                 len(
@@ -290,7 +295,7 @@ class FormatterMod(loader.Module):
             return
 
         target_mode = self.aliases.get(args)
-        if not target_mode or target_mode == "on":
+        if not target_mode:
             await utils.answer(
                 message,
                 self.get_string("invalid_format", use_prem, avail_fmts=avail_fmts),
@@ -356,9 +361,7 @@ class FormatterMod(loader.Module):
             return
 
         if self.db.get("Formatter", "spam_protection", True):
-            now = time.time()
-            self.msg_history.append({"msg": text, "time": now})
-            if self.check_spam():
+            if self.check_spam(text):
                 self.db.set("Formatter", "mode", "off")
                 use_prem = self.me.premium or message.is_private
                 await self.client.send_message(
