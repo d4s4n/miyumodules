@@ -24,7 +24,7 @@
 # meta pic: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/pfp.png
 # meta banner: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/banner.png
 
-__version__ = (1, 0, 7)
+__version__ = (1, 0, 8)
 
 import time
 import asyncio
@@ -144,8 +144,7 @@ class FormatterMod(loader.Module):
 
     def __init__(self):
         self.msg_history = deque(maxlen=30)
-        self.formats = {"mono": "`", "bold": "**", "italic": "__", "spoiler": "||"}
-        self.html_formats = {
+        self.formats = {
             "mono": "<code>",
             "bold": "<b>",
             "italic": "<i>",
@@ -192,8 +191,8 @@ class FormatterMod(loader.Module):
 
     def get_fmt_info(self, mode):
         names = self.strings("fmt_names")
-        tag = self.html_formats.get(mode, "")
-        end_tag = f"</{tag[1:]}>" if tag else ""
+        tag = self.formats.get(mode, "")
+        end_tag = f"</{tag[1:-1]}>"
         name = names.get(mode, "Unknown")
         example = f"{tag}{self.strings('example_text')}{end_tag}"
         return name, example
@@ -372,8 +371,12 @@ class FormatterMod(loader.Module):
         delay = random.uniform(0.1, 0.15)
         try:
             await asyncio.sleep(delay)
-            md = self.formats.get(mode)
-            if md:
-                await message.edit(f"{md}{text}{md}")
+            tag = self.formats.get(mode)
+            end_tag = f"</{tag[1:-1]}>"
+
+            if tag:
+                await message.edit(
+                    f"{tag}{utils.escape_html(text)}{end_tag}", parse_mode="html"
+                )
         except Exception:
             pass
