@@ -4,12 +4,6 @@
   <a href="https://t.me/miyumodules">
     <img src="https://img.shields.io/badge/Telegram-Join%20Channel-blue?logo=telegram" alt="Telegram Channel" />
   </a>
-  <a href="https://github.com/d4s4n/miyumodules/stargazers">
-    <img src="https://img.shields.io/github/stars/d4s4n/miyumodules?style=social" alt="GitHub Stars" />
-  </a>
-  <a href="https://github.com/d4s4n/miyumodules/fork">
-    <img src="https://img.shields.io/github/forks/d4s4n/miyumodules?style=social" alt="GitHub Forks" />
-  </a>
 </p>
 
 ---
