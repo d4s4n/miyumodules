@@ -24,7 +24,7 @@
 # meta pic: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/pfp.png
 # meta banner: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/banner.png
 
-__version__ = (1, 0, 7)
+__version__ = (1, 0, 8)
 
 import time
 import asyncio
@@ -32,6 +32,7 @@ import random
 import re
 from collections import deque
 from .. import loader, utils
+
 
 @loader.tds
 class FormatterMod(loader.Module):
@@ -169,6 +170,21 @@ class FormatterMod(loader.Module):
             "trivial_limit": 5,
             "similarity_threshold": 6,
         }
+        self.emoji_pattern = re.compile(
+            "["
+            "\U0001F600-\U0001F64F"
+            "\U0001F300-\U0001F5FF"
+            "\U0001F680-\U0001F6FF"
+            "\U0001F700-\U0001F77F"
+            "\U0001F780-\U0001F7FF"
+            "\U0001F800-\U0001F8FF"
+            "\U0001F900-\U0001F9FF"
+            "\U0001FA00-\U0001FA6F"
+            "\U0001FA70-\U0001FAFF"
+            "\U00002702-\U000027B0"
+            "\U000024C2-\U0001F251"
+            "]+"
+        )
 
     async def client_ready(self, client, db):
         self.db = db
@@ -342,7 +358,7 @@ class FormatterMod(loader.Module):
 
         chat = await message.get_chat()
         if (
-            message.is_channel
+            (message.is_channel and not message.is_group)
             or getattr(chat, "is_self", False)
             or getattr(chat, "bot", False)
         ):
@@ -350,6 +366,10 @@ class FormatterMod(loader.Module):
 
         text = message.text
         if text.startswith(self.get_prefix()) or text.startswith("/"):
+            return
+
+        text_without_emoji = self.emoji_pattern.sub("", text)
+        if not text_without_emoji.strip():
             return
 
         if self.db.get("Formatter", "spam_protection", True):
