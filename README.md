@@ -14,14 +14,16 @@
 
 ---
 
-### 📦 Repository Overview
+### 📦 Repo Overview
 
-![Repo Stats](https://github-readme-stats.vercel.app/api/pin/?username=d4s4n&repo=miyumodules&theme=github_dark&hide_border=true)
-
-![Stars](https://img.shields.io/github/stars/d4s4n/miyumodules?style=flat&logo=github)
+![Code Quality](https://img.shields.io/badge/code%20quality-B-brightgreen?style=flat&logo=codefactor)
+![Code Size](https://img.shields.io/github/languages/code-size/d4s4n/miyumodules?style=flat&color=0078D7)
+![Open Issues](https://img.shields.io/github/issues/d4s4n/miyumodules?style=flat&color=44cc11)
+![License](https://img.shields.io/github/license/d4s4n/miyumodules?style=flat&color=orange)
+![Commit Activity](https://img.shields.io/github/commit-activity/m/d4s4n/miyumodules?style=flat&color=007ec6)
 ![Forks](https://img.shields.io/github/forks/d4s4n/miyumodules?style=flat&logo=github)
-![Issues](https://img.shields.io/github/issues/d4s4n/miyumodules?style=flat)
-![Last Commit](https://img.shields.io/github/last-commit/d4s4n/miyumodules?style=flat)
+![Stars](https://img.shields.io/github/stars/d4s4n/miyumodules?style=flat&logo=github)
+![Code Style](https://img.shields.io/badge/code%20style-black-black)
 
 ---
 
