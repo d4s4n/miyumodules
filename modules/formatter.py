@@ -24,7 +24,7 @@
 # meta pic: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/pfp.png
 # meta banner: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/banner.png
 
-__version__ = (1, 0, 8)
+__version__ = (1, 0, 7)
 
 import time
 import asyncio
@@ -287,7 +287,7 @@ class FormatterMod(loader.Module):
             return
 
         target_mode = self.aliases.get(args)
-        if not target_mode:
+        if not target_mode or target_mode not in self.formats and target_mode != "off":
             await utils.answer(
                 message,
                 self.get_string("invalid_format", use_prem, avail_fmts=avail_fmts),
