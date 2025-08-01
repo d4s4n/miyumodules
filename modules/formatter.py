@@ -33,6 +33,7 @@ import re
 from collections import deque
 from .. import loader, utils
 
+
 @loader.tds
 class FormatterMod(loader.Module):
     """Automatically formats your outgoing messages with advanced spam protection"""
@@ -66,10 +67,7 @@ class FormatterMod(loader.Module):
             "premium": "<emoji document_id=5287611315588707430>❌</emoji> <b>Invalid format.</b>\nAvailable: {avail_fmts}",
             "standard": "❌ <b>Invalid format.</b>\nAvailable: {avail_fmts}",
         },
-        "spam_detected": {
-            "premium": "<emoji document_id=5418144562944171366>⚠️</emoji> <b>Spam detected!</b> Formatter has been disabled.",
-            "standard": "😵‍💫 <b>Spam detected!</b> Formatter has been disabled.",
-        },
+        "spam_detected": "<emoji document_id=5418144562944171366>⚠️</emoji> <b>Spam detected!</b> Formatter has been disabled.",
         "spam_on": {
             "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Spam protection is ON</b>",
             "standard": "✅ <b>Spam protection is ON</b>",
@@ -119,10 +117,7 @@ class FormatterMod(loader.Module):
             "premium": "<emoji document_id=5287611315588707430>❌</emoji> <b>Неверный тип.</b>\nДоступные: {avail_fmts}",
             "standard": "❌ <b>Неверный тип.</b>\nДоступные: {avail_fmts}",
         },
-        "spam_detected": {
-            "premium": "<emoji document_id=5418144562944171366>⚠️</emoji> <b>Обнаружен спам!</b> Форматирование отключено.",
-            "standard": "😵‍💫 <b>Обнаружен спам!</b> Форматирование отключено.",
-        },
+        "spam_detected": "<emoji document_id=5418144562944171366>⚠️</emoji> <b>Обнаружен спам!</b> Форматирование отключено.",
         "spam_on": {
             "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Защита от спама ВКЛЮЧЕНА</b>",
             "standard": "✅ <b>Защита от спама ВКЛЮЧЕНА</b>",
@@ -270,7 +265,7 @@ class FormatterMod(loader.Module):
         use_prem = self.me.premium or message.is_private
         args = utils.get_args_raw(message).lower()
         mode = self.db.get("Formatter", "mode", "off")
-        avail_fmts = ", ".join(f"<code>{f}</code>" for f in self.formats)
+        avail_fmts = ", ".join(f"<code>{key}</code>" for key in self.formats)
 
         if not args:
             if mode == "off":
@@ -361,10 +356,7 @@ class FormatterMod(loader.Module):
         if self.db.get("Formatter", "spam_protection", True):
             if self.check_spam(text):
                 self.db.set("Formatter", "mode", "off")
-                use_prem = self.me.premium or message.is_private
-                await self.client.send_message(
-                    "me", self.get_string("spam_detected", use_prem)
-                )
+                await self.client.send_message("me", self.strings("spam_detected"))
                 return
 
         delay = random.uniform(0.1, 0.15)
@@ -372,7 +364,6 @@ class FormatterMod(loader.Module):
             await asyncio.sleep(delay)
             tag = self.formats.get(mode)
             end_tag = f"</{tag[1:-1]}>"
-
             if tag:
                 await message.edit(
                     f"{tag}{utils.escape_html(text)}{end_tag}", parse_mode="html"
