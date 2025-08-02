@@ -11,8 +11,8 @@
 # *       ║ 🔒 Licensed under the GNU AGPLv3
 # *       ║    https://www.gnu.org/licenses/agpl-3.0.html
 # *       ║
-# *       ║ ⛔️ You CANNOT edit or distribute this file without direct
-# *       ║    permission from the author.
+# *       ║⛔️ You CANNOT edit or distribute this file without direct
+# *       ║    permission from the autor.
 # *       ╚════════════════════════════════════════════════════════════╝
 
 # Name: Formatter
@@ -24,7 +24,7 @@
 # meta pic: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/pfp.png
 # meta banner: https://raw.githubusercontent.com/d4s4n/miyumodules/refs/heads/main/assets/banner.png
 
-__version__ = (1, 0, 8)
+__version__ = (1, 0, 9)
 
 import time
 import asyncio
@@ -32,6 +32,7 @@ import random
 import re
 from collections import deque
 from .. import loader, utils
+from telethon.tl.types import MessageEntityUrl, MessageEntityTextUrl
 
 
 @loader.tds
@@ -45,19 +46,21 @@ class FormatterMod(loader.Module):
             "bold": "Bold",
             "italic": "Italic",
             "spoiler": "Spoiler",
+            "underline": "Underline",
+            "strike": "Strikethrough",
         },
         "example_text": "Text example",
         "set_fmt": {
-            "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> <i>{example}</i>",
-            "standard": "✅ <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> <i>{example}</i>",
+            "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> {example}",
+            "standard": "✅ <b>Formatter set to {fmt_name}</b>\n<b>Example:</b> {example}",
         },
         "disabled": {
             "premium": "<emoji document_id=5879896690210639947>🗑</emoji> <b>Formatter is now off</b>",
             "standard": "🗑 <b>Formatter is now off</b>",
         },
         "status_on": {
-            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> <i>{example}</i>\n\n<b>Available:</b> {avail_fmts}",
-            "standard": "ℹ️ <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> <i>{example}</i>\n\n<b>Available:</b> {avail_fmts}",
+            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> {example}\n\n<b>Available:</b> {avail_fmts}",
+            "standard": "ℹ️ <b>Formatter is ON</b>\n<b>Mode:</b> {fmt_name}\n<b>Example:</b> {example}\n\n<b>Available:</b> {avail_fmts}",
         },
         "status_off": {
             "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Formatter is OFF</b>\n\n<b>Available:</b> {avail_fmts}",
@@ -95,19 +98,21 @@ class FormatterMod(loader.Module):
             "bold": "Жирный",
             "italic": "Курсив",
             "spoiler": "Спойлер",
+            "underline": "Подчеркнутый",
+            "strike": "Зачеркнутый",
         },
         "example_text": "Пример текста",
         "set_fmt": {
-            "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> <i>{example}</i>",
-            "standard": "✅ <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> <i>{example}</i>",
+            "premium": "<emoji document_id=5287692511945437157>✅</emoji> <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> {example}",
+            "standard": "✅ <b>Форматирование установлено на {fmt_name}</b>\n<b>Пример:</b> {example}",
         },
         "disabled": {
             "premium": "<emoji document_id=5879896690210639947>🗑</emoji> <b>Форматирование отключено</b>",
             "standard": "🗑 <b>Форматирование отключено</b>",
         },
         "status_on": {
-            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> <i>{example}</i>\n\n<b>Доступно:</b> {avail_fmts}",
-            "standard": "ℹ️ <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> <i>{example}</i>\n\n<b>Доступно:</b> {avail_fmts}",
+            "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> {example}\n\n<b>Доступно:</b> {avail_fmts}",
+            "standard": "ℹ️ <b>Форматирование ВКЛЮЧЕНО</b>\n<b>Режим:</b> {fmt_name}\n<b>Пример:</b> {example}\n\n<b>Доступно:</b> {avail_fmts}",
         },
         "status_off": {
             "premium": "<emoji document_id=5879785854284599288>ℹ️</emoji> <b>Форматирование ВЫКЛЮЧЕНО</b>\n\n<b>Доступно:</b> {avail_fmts}",
@@ -143,6 +148,8 @@ class FormatterMod(loader.Module):
             "bold": "<b>",
             "italic": "<i>",
             "spoiler": "<tg-spoiler>",
+            "underline": "<u>",
+            "strike": "<s>",
         }
         self.aliases = {
             "mono": "mono",
@@ -157,8 +164,15 @@ class FormatterMod(loader.Module):
             "i": "italic",
             "spoiler": "spoiler",
             "спойлер": "spoiler",
-            "с": "spoiler",
-            "s": "spoiler",
+            "underline": "underline",
+            "подчеркнутый": "underline",
+            "u": "underline",
+            "п": "underline",
+            "strike": "strike",
+            "strikethrough": "strike",
+            "зачеркнутый": "strike",
+            "s": "strike",
+            "з": "strike",
             "off": "off",
             "выкл": "off",
             "офф": "off",
@@ -210,12 +224,17 @@ class FormatterMod(loader.Module):
             self.db.set("Formatter", "spam_protection", True)
 
     def get_string(self, key, use_prem, **kwargs):
-        return self.strings(key)["premium" if use_prem else "standard"].format(**kwargs)
+        string_set = self.strings(key)
+        if isinstance(string_set, dict):
+            return string_set[
+                "premium" if use_prem and "premium" in string_set else "standard"
+            ].format(**kwargs)
+        return string_set.format(**kwargs)
 
     def get_fmt_info(self, mode):
         names = self.strings("fmt_names")
         tag = self.formats.get(mode, "")
-        end_tag = f"</{tag[1:-1]}>"
+        end_tag = f"</{tag[1:-1]}>" if tag.startswith("<") and ">" in tag else ""
         name = names.get(mode, "Unknown")
         example = f"{tag}{self.strings('example_text')}{end_tag}"
         return name, example
@@ -317,7 +336,9 @@ class FormatterMod(loader.Module):
             return
 
         target_mode = self.aliases.get(args)
-        if not target_mode or target_mode not in self.formats and target_mode != "off":
+        if not target_mode or (
+            target_mode not in self.formats and target_mode != "off"
+        ):
             await utils.answer(
                 message,
                 self.get_string("invalid_format", use_prem, avail_fmts=avail_fmts),
@@ -351,8 +372,7 @@ class FormatterMod(loader.Module):
         choice = self.aliases.get(args)
         if choice not in ["on", "off"]:
             await utils.answer(
-                message,
-                self.get_string("invalid_format", use_prem, avail_fmts="on, off"),
+                message, "Invalid state. Available: <code>on</code>, <code>off</code>"
             )
             return
 
@@ -380,6 +400,12 @@ class FormatterMod(loader.Module):
 
         text = message.text
         if text.startswith(self.get_prefix()) or text.startswith("/"):
+            return
+
+        if message.entities and any(
+            isinstance(e, (MessageEntityUrl, MessageEntityTextUrl))
+            for e in message.entities
+        ):
             return
 
         text_without_emoji = self.emoji_pattern.sub("", text)
