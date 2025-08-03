@@ -14,7 +14,7 @@
 ## 📦 Repo Overview
 
 <p align="center">
-  <img src="https://tenor.com/ru/view/repo-repo-moment-repo-funny-repo-explode-gif-3470488336647447255" alt="Intense Cat" width="200" />
+  <img src="https://media.tenor.com/jl8iF4VTDhIAAAAC/repo-repo-moment.gif" alt="Explosive Repo Moment" width="200" />
 </p>
 
 | **Metric** | **Status** |
