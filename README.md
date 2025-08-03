@@ -14,7 +14,7 @@
 ## 📦 Repo Overview
 
 <p align="center">
-  <img src="https://media.giphy.com/media/3o6ZsYNk67j3j0X9Yc/giphy.gif" alt="Angry Cat" width="200" />
+  <img src="https://media.giphy.com/media/xT9IgsZ1nDL3fW3F6M/giphy.gif" alt="Intense Cat" width="200" />
 </p>
 
 | **Metric** | **Status** |
@@ -23,7 +23,6 @@
 | **Code Size** | ![Code Size](https://img.shields.io/github/languages/code-size/d4s4n/miyumodules?style=flat&color=0078D7) |
 | **Open Issues** | ![Open Issues](https://img.shields.io/github/issues/d4s4n/miyumodules?style=flat&color=44cc11) |
 | **License** | ![License](https://img.shields.io/github/license/d4s4n/miyumodules?style=flat&color=orange) |
-| **Commit Activity** | ![Commit Activity](https://img.shields.io/github/commit-activity/m/d4s4n/miyumodules?style=flat&color=007ec6) |
 | **Forks** | ![Forks](https://img.shields.io/github/forks/d4s4n/miyumodules?style=flat&logo=github) |
 | **Stars** | ![Stars](https://img.shields.io/github/stars/d4s4n/miyumodules?style=flat&logo=github) |
 | **Code Style** | ![Code Style](https://img.shields.io/badge/code%20style-Black-black) |
