@@ -14,7 +14,7 @@
 ## 📦 Repo Overview
 
 <p align="center">
-  <img src="https://media.tenor.com/jl8iF4VTDhIAAAAC/repo-repo-moment.gif" alt="Explosive Repo Moment" width="200" />
+  <img src="https://user-images.githubusercontent.com/74038190/212747903-e9bdf048-2dc8-41f9-b973-0e72ff07bfba.gif" alt="Explosive Repo Moment" width="200" />
 </p>
 
 | **Metric** | **Status** |
