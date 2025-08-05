@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 4)
+__version__ = (1, 0, 3)
 
 import datetime
 import bisect
@@ -77,7 +77,7 @@ def get_reg_date(uid: int) -> datetime.datetime:
 
 @loader.tds
 class UserInfoMod(loader.Module):
-    """Shows full information about a Telegram user"""
+    """Shows full information about a user"""
 
     strings = {
         "name": "UserInfo",
@@ -88,7 +88,7 @@ class UserInfoMod(loader.Module):
             "premium": (
                 '<b>User:</b> <a href="tg://user?id={id}">{name}</a>\n'
                 "<b>ID:</b> <code>{id}</code>\n"
-                "<b>Uname:</b> {username}\n\n"
+                "<b>Uname:</b> <code>{username}</code>\n\n"
                 "<b><emoji document_id=5958376256788502078>⭐️</emoji> Premium:</b> {premium}\n"
                 "<b><emoji document_id=5879896690210639947>🗑️</emoji> Deleted:</b> {deleted}\n"
                 "<b><emoji document_id=5963224093749678888>👁</emoji> Frozen:</b> {frozen}\n"
@@ -101,7 +101,7 @@ class UserInfoMod(loader.Module):
             "standard": (
                 '<b>User:</b> <a href="tg://user?id={id}">{name}</a>\n'
                 "<b>ID:</b> <code>{id}</code>\n"
-                "<b>Uname:</b> {username}\n\n"
+                "<b>Uname:</b> <code>{username}</code>\n\n"
                 "<b>👑 Premium:</b> {premium}\n"
                 "<b>🗑️ Deleted:</b> {deleted}\n"
                 "<b>❄️ Frozen:</b> {frozen}\n"
@@ -136,11 +136,11 @@ class UserInfoMod(loader.Module):
         },
         "yes": "Yes",
         "no": "No",
-        "not_specified": "<code>N/A</code>",
+        "not_specified": "N/A",
     }
 
     strings_ru = {
-        "_cls_doc": "Показывает полную информацию о пользователе Telegram",
+        "_cls_doc": "Показывает полную информацию о пользователе",
         "_cmd_doc_uinfo": "<юз/ответ/id> - Получить информацию о пользователе",
         "processing": "<b>Обработка...</b>",
         "user_not_found": "<b>Пользователь не найден.</b>",
@@ -163,7 +163,7 @@ class UserInfoMod(loader.Module):
             "premium": (
                 '<b>Пользователь:</b> <a href="tg://user?id={id}">{name}</a>\n'
                 "<b>ID:</b> <code>{id}</code>\n"
-                "<b>Юз:</b> {username}\n\n"
+                "<b>Юз:</b> <code>{username}</code>\n\n"
                 "<b><emoji document_id=5958376256788502078>⭐️</emoji> Премиум:</b> {premium}\n"
                 "<b><emoji document_id=5879896690210639947>🗑️</emoji> Удален:</b> {deleted}\n"
                 "<b><emoji document_id=5963224093749678888>👁</emoji> Заморожен:</b> {frozen}\n"
@@ -176,7 +176,7 @@ class UserInfoMod(loader.Module):
             "standard": (
                 '<b>Пользователь:</b> <a href="tg://user?id={id}">{name}</a>\n'
                 "<b>ID:</b> <code>{id}</code>\n"
-                "<b>Юз:</b> {username}\n\n"
+                "<b>Юз:</b> <code>{username}</code>\n\n"
                 "<b>👑 Премиум:</b> {premium}\n"
                 "<b>🗑️ Удален:</b> {deleted}\n"
                 "<b>❄️ Заморожен:</b> {frozen}\n"
@@ -211,7 +211,7 @@ class UserInfoMod(loader.Module):
         },
         "yes": "Да",
         "no": "Нет",
-        "not_specified": "<code>Н/Д</code>",
+        "not_specified": "Н/Д",
     }
 
     def format_date(self, date_obj):
