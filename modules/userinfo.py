@@ -205,7 +205,7 @@ class UserInfoMod(loader.Module):
                 "<b>ID:</b> <code>{id}</code>\n\n"
                 "<b>👑 Премиум:</b> {premium}\n"
                 "<b>🗑️ Удален:</b> {deleted}\n"
-		"<b>❄️ Заморожен:</b> {frozen}\n"
+	        "<b>❄️ Заморожен:</b> {frozen}\n"
                 "<b>🤖 Бот:</b> {bot}\n"
                 "<b>🗄️ ДЦ:</b> <code>{dc}</code>\n\n"
                 "<b>🗓️ Рег:</b> <code>{reg_date}</code>"
