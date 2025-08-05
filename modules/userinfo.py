@@ -20,7 +20,7 @@
 # Name: UserInfo
 # Author: miyumodules
 # Commands:
-# .uinfo | .whois | .userinfo
+# .uinfo
 # scope: hikka_only
 # meta developer: @miyumodules
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
