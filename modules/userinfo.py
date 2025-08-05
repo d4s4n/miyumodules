@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 3)
+__version__ = (1, 0, 4)
 
 import datetime
 import bisect
@@ -84,6 +84,7 @@ class UserInfoMod(loader.Module):
         "processing": "<b>Processing...</b>",
         "user_not_found": "<b>User not found.</b>",
         "not_a_user": "<b>This is a channel, not a user.</b>",
+        "no_bio": "Not specified",
         "info_template": {
             "premium": (
                 '<b>User:</b> <a href="tg://user?id={id}">{name}</a>\n'
@@ -145,6 +146,7 @@ class UserInfoMod(loader.Module):
         "processing": "<b>Обработка...</b>",
         "user_not_found": "<b>Пользователь не найден.</b>",
         "not_a_user": "<b>Это канал, а не пользователь.</b>",
+        "no_bio": "Нету",
         "months": [
             "Январь",
             "Февраль",
@@ -222,10 +224,7 @@ class UserInfoMod(loader.Module):
         except KeyError:
             return date_obj.strftime("%B %Y")
 
-    @loader.command(
-        aliases=["whois", "userinfo"], ru_doc="<юз/ответ/id> - полная инфа о юзере"
-    )
-    async def uinfo(self, message):
+    async def uinfocmd(self, message):
         """<user/reply/id> - Get full info about a user"""
 
         msg = await utils.answer(message, self.strings("processing"))
@@ -257,19 +256,15 @@ class UserInfoMod(loader.Module):
         is_frozen = user.restricted
         is_limited = is_deleted or is_frozen
 
-        bio = self.strings("not_specified")
+        bio = self.strings("no_bio")
         if not is_limited:
             try:
                 full_user = await self.client(GetFullUserRequest(user.id))
-                bio = full_user.full_user.about or self.strings("not_specified")
+                bio = full_user.full_user.about or self.strings("no_bio")
             except Exception:
                 pass
 
-        dc = (
-            user.photo.dc_id
-            if hasattr(user.photo, "dc_id")
-            else self.strings("not_specified")
-        )
+        dc = user.photo.dc_id if user.photo else self.strings("not_specified")
 
         name = utils.escape_html(user.first_name or "Deleted")
         if user.last_name:
@@ -305,3 +300,13 @@ class UserInfoMod(loader.Module):
         template = self.strings(template_key)[template_style]
         text = template.format(**info)
         await utils.answer(msg, text)
+
+    @loader.command(ru_doc="<юз/ответ/id> - полная инфа о юзере")
+    async def whoiscmd(self, message):
+        """Alias for .uinfo"""
+        await self.uinfocmd(message)
+
+    @loader.command(ru_doc="<юз/ответ/id> - полная инфа о юзере")
+    async def userinfocmd(self, message):
+        """Alias for .uinfo"""
+        await self.uinfocmd(message)
