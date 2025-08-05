@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # *          __  __ _             __  __           _       _
 # *         |  \/  (_)_   _ _   _|  \/  | ___   __| |_   _| | ___  ___
 # *         | |\/| | | | | | | | | |\/| |/ _ \ / _` | | | | |/ _ \/ __|
@@ -204,7 +206,8 @@ class UserInfoMod(loader.Module):
                 '<b>Пользователь:</b> <a href="tg://user?id={id}">{name}</a>\n'
                 "<b>ID:</b> <code>{id}</code>\n\n"
                 "<b>👑 Премиум:</b> {premium}\n"
-                "<b>🗑️ Удален:</b> {deleted}\n" - "<b>❄️ Заморожен:</b> {frozen}\n"
+                "<b>🗑️ Удален:</b> {deleted}\n"
+                "<b>❄️ Заморожен:</b> {frozen}\n"
                 "<b>🤖 Бот:</b> {bot}\n"
                 "<b>🗄️ ДЦ:</b> <code>{dc}</code>\n\n"
                 "<b>🗓️ Рег:</b> <code>{reg_date}</code>"
@@ -259,7 +262,7 @@ class UserInfoMod(loader.Module):
         bio = self.strings("no_bio")
         if not is_limited:
             try:
-                full_user = await self.client.get_FullUserRequest(user.id)
+                full_user = await self.client(GetFullUserRequest(user.id))
                 bio = full_user.full_user.about or self.strings("no_bio")
             except Exception:
                 pass
