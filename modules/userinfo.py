@@ -24,11 +24,12 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 3)
+__version__ = (1, 0, 4)
 
 import datetime
 import bisect
 from telethon.tl.functions.users import GetFullUserRequest
+from telethon.tl.types import User
 from .. import loader, utils
 
 REG_DATES = {
@@ -82,6 +83,7 @@ class UserInfoMod(loader.Module):
         "name": "UserInfo",
         "processing": "<b>Processing...</b>",
         "user_not_found": "<b>User not found.</b>",
+        "not_a_user": "<b>This is a channel, not a user.</b>",
         "info_template": {
             "premium": (
                 '<b>User:</b> <a href="tg://user?id={id}">{name}</a>\n'
@@ -142,6 +144,7 @@ class UserInfoMod(loader.Module):
         "_cmd_doc_uinfo": "<юз/ответ/id> - Получить информацию о пользователе",
         "processing": "<b>Обработка...</b>",
         "user_not_found": "<b>Пользователь не найден.</b>",
+        "not_a_user": "<b>Это канал, а не пользователь.</b>",
         "months": [
             "Январь",
             "Февраль",
@@ -246,6 +249,10 @@ class UserInfoMod(loader.Module):
             await utils.answer(msg, self.strings("user_not_found"))
             return
 
+        if not isinstance(user, User):
+            await utils.answer(msg, self.strings("not_a_user"))
+            return
+
         is_deleted = user.deleted
         is_frozen = user.restricted
         is_limited = is_deleted or is_frozen
@@ -267,7 +274,6 @@ class UserInfoMod(loader.Module):
         name = utils.escape_html(user.first_name or "Deleted")
         if user.last_name:
             name += f" {utils.escape_html(user.last_name)}"
-
         if len(name) > 200:
             name = name[:200] + "..."
 
@@ -290,16 +296,12 @@ class UserInfoMod(loader.Module):
         }
 
         me = await self.client.get_me()
-
         template_style = (
             "premium"
             if me.premium or (message.is_private and message.chat_id == me.id)
             else "standard"
         )
-
         template_key = "info_template_limited" if is_limited else "info_template"
         template = self.strings(template_key)[template_style]
-
         text = template.format(**info)
-
         await utils.answer(msg, text)
