@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 0, 4)
+__version__ = (1, 0, 3)
 
 import datetime
 import bisect
@@ -148,18 +148,8 @@ class UserInfoMod(loader.Module):
         "not_a_user": "<b>Это канал, а не пользователь.</b>",
         "no_bio": "Нету",
         "months": [
-            "Январь",
-            "Февраль",
-            "Март",
-            "Апрель",
-            "Май",
-            "Июнь",
-            "Июль",
-            "Август",
-            "Сентябрь",
-            "Октябрь",
-            "Ноябрь",
-            "Декабрь",
+            "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
         ],
         "info_template": {
             "premium": (
@@ -205,7 +195,7 @@ class UserInfoMod(loader.Module):
                 "<b>ID:</b> <code>{id}</code>\n\n"
                 "<b>👑 Премиум:</b> {premium}\n"
                 "<b>🗑️ Удален:</b> {deleted}\n"
-	        "<b>❄️ Заморожен:</b> {frozen}\n"
+                "<b>❄️ Заморожен:</b> {frozen}\n"
                 "<b>🤖 Бот:</b> {bot}\n"
                 "<b>🗄️ ДЦ:</b> <code>{dc}</code>\n\n"
                 "<b>🗓️ Рег:</b> <code>{reg_date}</code>"
@@ -225,7 +215,7 @@ class UserInfoMod(loader.Module):
             return date_obj.strftime("%B %Y")
 
     @loader.command(ru_doc="<юз/ответ/id> - Получить информацию о пользователе")
-    async def uinfocmd(self, message):
+    async def uinfo(self, message):
         """<user/reply/id> - Get full info about a user"""
 
         msg = await utils.answer(message, self.strings("processing"))
@@ -260,7 +250,7 @@ class UserInfoMod(loader.Module):
         bio = self.strings("no_bio")
         if not is_limited:
             try:
-                full_user = await self.client.get_FullUserRequest(user.id)
+                full_user = await self.client(GetFullUserRequest(user.id))
                 bio = full_user.full_user.about or self.strings("no_bio")
             except Exception:
                 pass
@@ -279,9 +269,7 @@ class UserInfoMod(loader.Module):
         info = {
             "id": user.id,
             "name": name,
-            "username": f"@{user.username}"
-            if user.username
-            else self.strings("not_specified"),
+            "username": f"@{user.username}" if user.username else self.strings("not_specified"),
             "premium": self.strings("yes") if user.premium else self.strings("no"),
             "deleted": self.strings("yes") if is_deleted else self.strings("no"),
             "frozen": self.strings("yes") if is_frozen else self.strings("no"),
