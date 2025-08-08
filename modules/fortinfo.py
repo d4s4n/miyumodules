@@ -20,7 +20,6 @@
 # Commands:
 # .fnnews | .fnmap | .fnitem | .fncreator | .fnaes
 # scope: hikka_only
-# requires: aiohttp, pillow
 # meta developer: @miyumodules
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
