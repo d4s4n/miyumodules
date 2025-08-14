@@ -148,8 +148,18 @@ class UserInfoMod(loader.Module):
         "not_a_user": "<b>Это канал, а не пользователь.</b>",
         "no_bio": "Нету",
         "months": [
-            "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+            "Январь",
+            "Февраль",
+            "Март",
+            "Апрель",
+            "Май",
+            "Июнь",
+            "Июль",
+            "Август",
+            "Сентябрь",
+            "Октябрь",
+            "Ноябрь",
+            "Декабрь",
         ],
         "info_template": {
             "premium": (
@@ -269,7 +279,9 @@ class UserInfoMod(loader.Module):
         info = {
             "id": user.id,
             "name": name,
-            "username": f"@{user.username}" if user.username else self.strings("not_specified"),
+            "username": f"@{user.username}"
+            if user.username
+            else self.strings("not_specified"),
             "premium": self.strings("yes") if user.premium else self.strings("no"),
             "deleted": self.strings("yes") if is_deleted else self.strings("no"),
             "frozen": self.strings("yes") if is_frozen else self.strings("no"),
