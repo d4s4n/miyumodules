@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 3, 5)
+__version__ = (1, 3, 6)
 
 import aiohttp
 import asyncio
@@ -304,7 +304,6 @@ class FortInfoMod(loader.Module):
 
     async def create_item_image(self, item):
         W, H = 1024, 1024
-
         img_url = item.get("images", {}).get("featured") or item.get("images", {}).get(
             "icon"
         )
@@ -329,18 +328,11 @@ class FortInfoMod(loader.Module):
 
         for y in range(-text_height, H, text_height * 2):
             for x in range(-text_width, W, text_width * 2):
-                draw.text(
-                    (x, y),
-                    text,
-                    font=font,
-                    fill=(255, 255, 255, 20),
-                )
-
+                draw.text((x, y), text, font=font, fill=(255, 255, 255, 20))
         bg.paste(text_layer, (0, 0), text_layer)
 
         item_with_glow = await asyncio.to_thread(self.create_glow, item_img)
         item_with_glow.thumbnail((W - 80, H - 80))
-
         bg.paste(
             item_with_glow,
             ((W - item_with_glow.width) // 2, (H - item_with_glow.height) // 2),
@@ -362,7 +354,6 @@ class FortInfoMod(loader.Module):
         strings_to_use = self.strings_ru if lang == "ru" else self.strings
 
         query = utils.get_args_raw(message)
-
         if not query:
             await utils.answer(message, strings_to_use["no_item_arg"][style])
             return
@@ -416,7 +407,6 @@ class FortInfoMod(loader.Module):
             type=utils.escape_html(item_type),
             id=utils.escape_html(item.get("id", not_avail)),
         )
-
         await self.client.send_file(
             message.peer_id,
             file=image_buffer,
@@ -432,7 +422,6 @@ class FortInfoMod(loader.Module):
         strings_to_use = self.strings_ru if lang == "ru" else self.strings
 
         code = utils.get_args_raw(message)
-
         if not code:
             await utils.answer(message, strings_to_use["no_creator_code_arg"][style])
             return
@@ -459,7 +448,6 @@ class FortInfoMod(loader.Module):
             account_name=utils.escape_html(account_name),
             status=utils.escape_html(status_text),
         )
-
         await utils.answer(msg, text)
 
     @loader.command(aliases=["fnews"], ru_doc="- Показать последние новости")
@@ -484,14 +472,19 @@ class FortInfoMod(loader.Module):
         )
 
         if image_url := latest.get("image"):
-            img = await self.api_request(image_url)
-            await self.client.send_file(
-                message.peer_id,
-                file=img,
-                caption=caption,
-                reply_to=message.reply_to_msg_id,
-            )
-            await msg.delete()
+            img_bytes = await self.api_request(image_url)
+            if img_bytes:
+                file = io.BytesIO(img_bytes)
+                file.name = "news.png"
+                await self.client.send_file(
+                    message.peer_id,
+                    file=file,
+                    caption=caption,
+                    reply_to=message.reply_to_msg_id,
+                )
+                await msg.delete()
+            else:
+                await utils.answer(msg, caption)
         else:
             await utils.answer(msg, caption)
 
@@ -509,14 +502,21 @@ class FortInfoMod(loader.Module):
             await utils.answer(msg, strings_to_use["no_map"][style])
             return
 
-        img = await self.api_request(map_url)
-        today_str = self.format_date(datetime.now())
-
-        caption = strings_to_use["map_caption"][style].format(date=today_str)
-        await self.client.send_file(
-            message.peer_id, file=img, caption=caption, reply_to=message.reply_to_msg_id
-        )
-        await msg.delete()
+        img_bytes = await self.api_request(map_url)
+        if img_bytes:
+            file = io.BytesIO(img_bytes)
+            file.name = "map.png"
+            today_str = self.format_date(datetime.now())
+            caption = strings_to_use["map_caption"][style].format(date=today_str)
+            await self.client.send_file(
+                message.peer_id,
+                file=file,
+                caption=caption,
+                reply_to=message.reply_to_msg_id,
+            )
+            await msg.delete()
+        else:
+            await utils.answer(msg, strings_to_use["no_map"][style])
 
     @loader.command(
         aliases=["faes"], ru_doc="- Показать информацию о текущем AES-ключе"
@@ -536,7 +536,6 @@ class FortInfoMod(loader.Module):
 
         not_avail = strings_to_use["not_available"]
         updated_str = data.get("updated", not_avail)
-
         if updated_str != not_avail:
             try:
                 updated_date = datetime.strptime(updated_str, "%Y-%m-%dT%H:%M:%SZ")
@@ -555,5 +554,4 @@ class FortInfoMod(loader.Module):
             updated=utils.escape_html(updated_str),
             dynamic_keys=utils.escape_html(dynamic_keys_str),
         )
-
         await utils.answer(msg, text)
