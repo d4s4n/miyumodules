@@ -24,7 +24,7 @@
 # meta pic: https://github.com/d4s4n/miyumodules/blob/main/assets/pfp.png?raw=true
 # meta banner: https://github.com/d4s4n/miyumodules/blob/main/assets/banner.png?raw=true
 
-__version__ = (1, 1, 4)
+__version__ = (1, 1, 6)
 
 import psutil
 import platform
@@ -123,6 +123,16 @@ class ServerInfoMod(loader.Module):
             ),
         },
     }
+
+    async def client_ready(self, client, db):
+        self.client = client
+        self.me = await client.get_me()
+
+    async def get_style(self, message):
+        is_premium = self.me.premium or (
+            message.is_private and message.peer_id.user_id == self.me.id
+        )
+        return "premium" if is_premium else "standard"
 
     def get_os_info(self):
         if distro:
@@ -229,18 +239,13 @@ class ServerInfoMod(loader.Module):
                 s["uptime_str"] = str(time_part)
         except (PermissionError, Exception):
             s["uptime_str"] = "N/A"
-
         return s
 
     @loader.command(ru_doc="Показать информацию о сервере")
     async def serverinfo(self, message):
         """Show server info"""
         stats = await self.get_stats()
-        me = await message.client.get_me()
-
-        template = self.strings("info_template")[
-            "premium" if me.premium or message.is_private else "standard"
-        ]
+        style = await self.get_style(message)
+        template = self.strings("info_template")[style]
         text = template.format(**stats)
-
-        await utils.answer(message, text)
+        await utils.answer(message, text, parse_mode="html")
