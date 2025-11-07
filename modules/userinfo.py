@@ -1,15 +1,3 @@
-import sys
-from pathlib import Path
-
-write_text = Path.write_text
-
-def patched_write(self, data, encoding=None, errors=None, newline=None):
-    if encoding is None:
-        encoding = 'utf-8'
-    return write_text(self, data, encoding=encoding, errors=errors, newline=newline)
-
-Path.write_text = patched_write
-
 # *          __  __ _             __  __           _       _
 # *         |  \/  (_)_   _ _   _|  \/  | ___   __| |_   _| | ___  ___
 # *         | |\/| | | | | | | | | |\/| |/ _ \ / _` | | | | |/ _ \/ __|
