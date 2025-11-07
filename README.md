@@ -20,46 +20,7 @@
 
 *Quality modules to extend your Telegram functionality*
 
-</div>
-
-## 📊 Repo Overview
-
-<table>
-<tr>
-<td align="center"><b>Metric</b></td>
-<td align="center"><b>Status</b></td>
-</tr>
-<tr>
-<td>💎 Code Quality</td>
-<td><img src="https://img.shields.io/badge/quality-Flawless-brightgreen?style=flat&logo=codefactor"/></td>
-</tr>
-<tr>
-<td>📏 Code Size</td>
-<td><img src="https://img.shields.io/github/languages/code-size/d4s4n/miyumodules?style=flat&color=0078D7"/></td>
-</tr>
-<tr>
-<td>🐛 Open Issues</td>
-<td><img src="https://img.shields.io/github/issues/d4s4n/miyumodules?style=flat&color=44cc11"/></td>
-</tr>
-<tr>
-<td>📜 License</td>
-<td><img src="https://img.shields.io/github/license/d4s4n/miyumodules?style=flat&color=orange"/></td>
-</tr>
-<tr>
-<td>🍴 Forks</td>
-<td><img src="https://img.shields.io/github/forks/d4s4n/miyumodules?style=flat&logo=github"/></td>
-</tr>
-<tr>
-<td>⭐ Stars</td>
-<td><img src="https://img.shields.io/github/stars/d4s4n/miyumodules?style=flat&logo=github"/></td>
-</tr>
-<tr>
-<td>🎨 Code Style</td>
-<td><img src="https://img.shields.io/badge/code%20style-Black-black"/></td>
-</tr>
-</table>
-
-<div align="center">
+---
 
 ## 👥 Contributors
 
@@ -67,11 +28,7 @@
   <img src="https://contrib.rocks/image?repo=d4s4n/miyumodules" alt="Contributors" />
 </a>
 
-</div>
-
 ---
-
-<div align="center">
 
 ## 📜 License
 
